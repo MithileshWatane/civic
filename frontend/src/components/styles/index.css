@@ -1,0 +1,204 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* Keep it above other elements */
+  transition: opacity 0.5s ease, background-color 0.5s ease;
+}
+
+.scrolled .navbar {
+  opacity: 0.7; /* Faded effect */
+  background-color: rgba(0, 51, 102, 0.9); /* Slightly transparent background */
+}
+
+
+.navbar .logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar li {
+  margin: 0 1rem;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+}
+
+.hero {
+  position: relative;
+  height: 65vh;
+  background: url('bgimage.jpg') no-repeat center center;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.hero .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Darker overlay for better content visibility */
+  z-index: 0;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  color: #ffffff;
+}
+
+
+.hero h1 {
+  font-size: 2.5rem;
+  animation: fadeIn 1s ease;
+}
+
+.hero p {
+  margin: 1rem 0;
+  font-size: 1.2rem;
+}
+
+.btn {
+  background-color: #ffffff; /* White */
+  color: #006aff; /* Dark blue */
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #cce7ff; /* Light blue */
+  transform: translateY(-3px);
+}
+
+.features {
+  display: grid;
+  margin-left: 60px;
+  margin-right: 60px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+}
+.card {
+  background-color: #ffffff; /* White */
+  border: 1px solid #d1d1d1;
+  border-radius: 10px;
+  padding: 0; /* Remove padding to handle layout */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-image {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+}
+
+.card-content {
+  padding: 1rem; /* Decrease padding */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.card-content h3 {
+  margin: 0 0 0.2rem; /* Reduce margin between heading and text */
+  font-size: 1.5rem;
+}
+
+.card-content p {
+  margin-bottom: 0.5rem; /* Reduce space between paragraph and button */
+  flex-grow: 1;
+}
+
+.card-content .btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* margin-top: 0.5rem; */
+  /* align-self: center; Center the button */
+}
+
+
+footer {
+  background-color: #446ca5bc; /* Dark blue */
+  color: #ffffff;
+  text-align: center;
+  padding: 1rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scrollBackground {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Background images for specific cards */
+.card:nth-child(1) .card-image {
+  background-image: url('issue\ reporting.jpg');
+}
+
+.card:nth-child(2) .card-image {
+  background-image: url('trending.jpg');
+}
+
+.card:nth-child(3) .card-image {
+  background-image: url('Funding.png');
+}
+
+.card:nth-child(4) .card-image {
+  background-image: url('track\ progress.webp');
+}
+
+.card:nth-child(5) .card-image {
+  background-image: url('Community\ Engaement.jpg');
+}
+
+.card:nth-child(6) .card-image {
+  background-image: url('Government.jpg');
+}
+
