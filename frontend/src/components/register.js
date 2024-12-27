@@ -47,7 +47,7 @@ export default function Register() {
   
       if (response.status === 201) {
         // Redirect to login page or dashboard after successful registration
-        navigate('/login');
+        navigate('/home');
       }
     } catch (error) {
       setErrorMessage(error.response?.data?.message || 'Registration failed');

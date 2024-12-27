@@ -1,13 +1,60 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './styles/login.css'; // Import the CSS file
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import './styles/login.css';
 
 export default function Login() {
-  const [selectedRole, setSelectedRole] = useState(''); // State to manage selected role
+  const [selectedRole, setSelectedRole] = useState(''); // Track selected role
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate(); // Redirect after successful login
 
-  // Function to handle role selection
+  // Role selection
   const handleRoleSelection = (role) => {
     setSelectedRole(role);
+    setErrorMessage(''); // Clear any previous errors
+  };
+
+  // Input change handler
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // Submit handler
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage(''); // Reset error messages
+    
+    try {
+      const endpoint =
+        selectedRole === 'citizen'
+          ? 'http://localhost:5000/api/auth/citizen'
+          : 'http://localhost:5000/api/auth/government';
+
+      const response = await axios.post(endpoint, {
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (response.status === 200) {
+        const { token } = response.data;
+
+        // Store the token in localStorage (or cookies for security)
+        localStorage.setItem('token', token);
+        alert('Login successful');
+
+        // Redirect user based on their role
+        navigate('/');
+      }
+    } catch (error) {
+      setErrorMessage(error.response?.data?.message || 'Login failed. Please try again.');
+    }
   };
 
   return (
@@ -45,69 +92,41 @@ export default function Login() {
               </button>
             </div>
 
-            <div className="signup-link">
-              <Link to="/register" className="no-underline">Sign up</Link>
-            </div>
-
-            {/* Conditional rendering of login forms based on selected role */}
-            <div className={`login-card-${selectedRole} ${selectedRole ? 'expanded' : ''}`}>
-              {selectedRole === 'citizen' && (
-                <>
-                  <h2>Citizen Login</h2>
-                  <p>Login to track or resolve complaints</p>
-                  <form>
-                    <label htmlFor="citizen-email">Email</label>
-                    <input
-                      type="email"
-                      id="citizen-email"
-                      placeholder="Enter your email"
-                      required
-                    />
-                    <label htmlFor="citizen-password">Password</label>
-                    <input
-                      type="password"
-                      id="citizen-password"
-                      placeholder="Enter your password"
-                      required
-                    />
-                    <button type="submit" className="login-btn">
-                      Login
-                    </button>
-                    <div className="login-links">
-                      <a href="#">Forgot Password?</a>
-                    </div>
-                  </form>
-                </>
-              )}
-
-              {selectedRole === 'government' && (
-                <>
-                  <h2>Authority Login</h2>
-                  <p>Login to manage civic complaints</p>
-                  <form>
-                    <label htmlFor="gov-email">Email</label>
-                    <input
-                      type="email"
-                      id="gov-email"
-                      placeholder="Enter your email"
-                      required
-                    />
-                    <label htmlFor="gov-password">Password</label>
-                    <input
-                      type="password"
-                      id="gov-password"
-                      placeholder="Enter your password"
-                      required
-                    />
-                    <button type="submit" className="login-btn">
-                      Login
-                    </button>
-                  </form>
-                </>
-              )}
-            </div>
+            {/* Conditional rendering of login forms */}
+            {selectedRole && (
+              <form onSubmit={handleSubmit} className="form-section">
+                <h2>{selectedRole === 'citizen' ? 'Citizen Login' : 'Authority Login'}</h2>
+                <p>Login to {selectedRole === 'citizen' ? 'track or resolve complaints' : 'manage civic complaints'}</p>
+                <label htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+                <label htmlFor="password">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+                <button type="submit" className="login-btn">
+                  Login
+                </button>
+                {errorMessage && <p className="error-message">{errorMessage}</p>}
+                <div className="login-links">
+                  <Link to="/forgot-password">Forgot Password?</Link>
+                </div>
+              </form>
+            )}
           </div>
 
+          {/* Optional image */}
           <div className="login-image">
             <img
               alt="Illustration of a laptop, coffee cup, and plant"
