@@ -7,5 +7,5 @@ router.post('/citizen', createUser);
 
 // Register as a government authority
 router.post('/government', createGovernmentAccount);
-
-module.exports = router;
+  
+  module.exports = router;

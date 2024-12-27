@@ -31,6 +31,8 @@ app.use('/api/government', governmentRoutes);
 app.use('/api/issues', issueRoutes);
 app.use('/api/community', communityRoutes); 
 app.use('/api/register' , authRoutes)
+app.use('/api/auth', userRoutes); // Correct prefix for authRoutes
+
 
 // Start the server
 app.listen(PORT, () => {
