@@ -28,15 +28,37 @@ body {
   display: flex;
   margin: 0;
   padding: 0;
+  align-items: center;
+
 }
 
 .navbar li {
   margin: 0 1rem;
+  
 }
 
 .navbar a {
   color: white;
   text-decoration: none;
+}
+
+.logout-btn {
+  background-color: #007bff; /* Blue background color */
+  color: white; /* White text color */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 20px; /* Add padding */
+  font-size: 16px; /* Font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease; /* Smooth transition on hover */
+}
+
+.logout-btn:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.logout-btn:active {
+  background-color: #003f7f; /* Even darker blue on click */
 }
 
 .hero {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Updated import
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './styles/register.css'; // Import the CSS file
+import './styles/register.css';
 
 export default function Register() {
   const [selectedRole, setSelectedRole] = useState(null);
@@ -10,12 +10,18 @@ export default function Register() {
     email: '',
     password: '',
     confirmPassword: '',
+    location: '',
+    department: '',
   });
   const [errorMessage, setErrorMessage] = useState('');
-  const navigate = useNavigate(); // Updated from useHistory to useNavigate
+  const navigate = useNavigate();
 
   const handleRoleSelection = (role) => {
     setSelectedRole(role);
+    // Clear unnecessary fields when switching roles
+    if (role === 'citizen') {
+      setFormData((prevData) => ({ ...prevData, location: '', department: '' }));
+    }
   };
 
   const handleChange = (e) => {
@@ -27,33 +33,49 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
+    if (!selectedRole) {
+      setErrorMessage('Please select a role before registering.');
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setErrorMessage('Passwords do not match');
       return;
     }
-  
+
     try {
-      // Use the correct backend server URL (e.g., http://localhost:5000)
-      const endpoint = selectedRole === 'citizen' ? 'http://localhost:5000/api/register/citizen' : 'http://localhost:5000/api/register/government';
-      
-      const payload = {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-      };
-  
+      const endpoint =
+        selectedRole === 'citizen'
+          ? 'http://localhost:5000/api/register/citizen'
+          : 'http://localhost:5000/api/register/government';
+
+      const payload =
+        selectedRole === 'citizen'
+          ? {
+              name: formData.name,
+              email: formData.email,
+              password: formData.password,
+            }
+          : {
+              name: formData.name,
+              email: formData.email,
+              password: formData.password,
+              location: formData.location,
+              department: formData.department,
+            };
+
       const response = await axios.post(endpoint, payload);
-  
+
       if (response.status === 201) {
-        // Redirect to login page or dashboard after successful registration
-        navigate('/home');
+        alert("Registered Successfully")
+        navigate('/');
       }
     } catch (error) {
       setErrorMessage(error.response?.data?.message || 'Registration failed');
     }
   };
-  
+
   return (
     <>
       <div className="navbar">
@@ -88,55 +110,72 @@ export default function Register() {
             </button>
           </div>
 
-          <div className={`register-card tab-content ${selectedRole ? 'active' : ''}`}>
-            {selectedRole && (
-              <div>
-                <h2>{selectedRole === 'citizen' ? 'Create a Citizen Account' : 'Create a Government Account'}</h2>
-                <p>Join us for a better experience</p>
-                <form onSubmit={handleSubmit}>
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder={selectedRole === 'citizen' ? 'name' : 'name'}
-                    required
-                    value={formData.name}
-                    onChange={handleChange}
-                  />
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    required
-                    value={formData.email}
-                    onChange={handleChange}
-                  />
-                  <input
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    required
-                    value={formData.password}
-                    onChange={handleChange}
-                  />
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    placeholder="Confirm Password"
-                    required
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                  />
-                  <button type="submit" className="register-btn">
-                    Register as {selectedRole === 'citizen' ? 'Citizen' : 'Authority'}
-                  </button>
-                </form>
-                {errorMessage && <p className="error-message">{errorMessage}</p>}
-                <div className="register-links">
-                  <Link to="/login">Already have an account? Login</Link>
-                </div>
+          {selectedRole && (
+            <div className="register-card tab-content active">
+              <h2>{selectedRole === 'citizen' ? 'Create a Citizen Account' : 'Create a Government Account'}</h2>
+              <form onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Name"
+                  required
+                  value={formData.name}
+                  onChange={handleChange}
+                />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="Confirm Password"
+                  required
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                />
+                {selectedRole === 'government' && (
+                  <>
+                    <input
+                      type="text"
+                      name="location"
+                      placeholder="Location (City/District)"
+                      required
+                      value={formData.location}
+                      onChange={handleChange}
+                    />
+                    <input
+                      type="text"
+                      name="department"
+                      placeholder="Department"
+                      required
+                      value={formData.department}
+                      onChange={handleChange}
+                    />
+                  </>
+                )}
+                <button type="submit" className="register-btn">
+                  Register as {selectedRole === 'citizen' ? 'Citizen' : 'Authority'}
+                </button>
+              </form>
+              {errorMessage && <p className="error-message">{errorMessage}</p>}
+              <div className="register-links">
+                <Link to="/login">Already have an account? Login</Link>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
 
