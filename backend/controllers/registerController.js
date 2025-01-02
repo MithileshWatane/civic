@@ -28,9 +28,10 @@ exports.createUser = async (req, res) => {
       res.status(500).json({ message: 'Server error', error: error.message });
     }
   };
-  
-  /// Create a government authority account
-exports.createGovernmentAccount = async (req, res) => {
+
+
+ /// Create a government authority account
+ exports.createGovernmentAccount = async (req, res) => {
   const { name, department, email, password, location } = req.body; // Added location field
 
   try {
@@ -54,45 +55,6 @@ exports.createGovernmentAccount = async (req, res) => {
     const payload = { id: authority._id, role: 'government' };
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.status(201).json({ message: 'Account created successfully', authority });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-};
-
-// Get all government authorities
-exports.getAllGovernmentAuthorities = async (req, res) => {
-  try {
-    const authorities = await GovernmentAuthority.find().select('name department email location');
-    res.status(200).json(authorities);
-  } catch (error) {
-    console.error('Error fetching government authorities:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-};
-
-exports.getGovernmentAuthorityById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const authority = await GovernmentAuthority.findById(id).select('name department email location');
-
-    if (!authority) {
-      return res.status(404).json({ message: 'Government authority not found' });
-    }
-
-    res.status(200).json(authority);
-  } catch (error) {
-    console.error('Error fetching government authority:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-};
-// Get all issues reported to the government authority
-exports.getReportedIssues = async (req, res) => {
-  const { authorityId } = req.params;
-
-  try {
-    // Fetch all issues tagged to the specific government authority
-    const issues = await Issue.find({ taggedAuthorities: authorityId });
-    res.status(200).json({ message: 'Issues fetched successfully', issues });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

@@ -1,5 +1,5 @@
 const express = require('express');
-const { createUser, createGovernmentAccount } = require('../controllers/authController');
+const { createUser, createGovernmentAccount } = require('../controllers/registerController');
 const router = express.Router();
 
 // Register as a citizen

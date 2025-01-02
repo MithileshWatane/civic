@@ -45,8 +45,9 @@ export default function Login() {
       if (response.status === 200) {
         const { token } = response.data;
 
-        // Store the token in localStorage (or cookies for security)
+        // Store the token and role in localStorage
         localStorage.setItem('token', token);
+        localStorage.setItem('role', selectedRole); // Store the selected role
         alert('Login successful');
 
         // Redirect user based on their role

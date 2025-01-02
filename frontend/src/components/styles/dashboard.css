@@ -188,3 +188,65 @@ footer {
 footer p {
   margin: 0;
 }
+.titles-section {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.titles-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px; /* Adds space between title buttons */
+  margin: 20px 0;
+}
+
+.category-btn {
+  padding: 12px 20px;
+  margin: 5px;
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+  border-radius: 4px;
+  border-color: 2px #0056b3;
+  transition: background-color 0.3s;
+  font-size: 16px;
+}
+
+.category-btn:hover {
+  background-color: #0056b3;
+}
+
+.category-btn.selected {
+  background-color: #004085;
+  color: #fff;
+  font-weight: bold;
+}
+.complaint-card .status-label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 10px;
+  display: block;
+  color: #333; /* Neutral text color */
+}
+
+.complaint-card .status-dropdown {
+  margin-top: 5px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.complaint-card .status-dropdown:focus {
+  outline: none;
+  border-color: #007bff; /* Blue border on focus */
+  background-color: #fff;
+}
+
+.complaint-card .status-dropdown:hover {
+  border-color: #0056b3; /* Darker blue border on hover */
+}

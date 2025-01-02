@@ -6,12 +6,10 @@ const CivicIssueForm = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    location: { type: 'Point', coordinates: [] }, // [longitude, latitude]
+    location: '', // Simple string for location
     governmentAuthority: '',
   });
 
-  const [longitude, setLongitude] = useState('');
-  const [latitude, setLatitude] = useState('');
   const [Authorities, setAuthorities] = useState([]);
 
   // Handle input changes
@@ -23,7 +21,7 @@ const CivicIssueForm = () => {
   // Fetch authorities from the backend
   const fetchAuthorities = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/government-authorities');
+      const response = await fetch('http://localhost:5000/api/government-authorities/get');
       const data = await response.json();
       setAuthorities(data); // Populate dropdown with data
     } catch (error) {
@@ -43,7 +41,7 @@ const CivicIssueForm = () => {
     const issueData = {
       title: formData.title,
       description: formData.description,
-      location: { type: 'Point', coordinates: [parseFloat(longitude), parseFloat(latitude)] },
+      location: formData.location, // Simple string for location
       governmentAuthority: formData.governmentAuthority,
     };
 
@@ -64,11 +62,9 @@ const CivicIssueForm = () => {
         setFormData({
           title: '',
           description: '',
-          location: { type: 'Point', coordinates: [] },
+          location: '',
           governmentAuthority: '',
         });
-        setLongitude('');
-        setLatitude('');
       } else {
         alert(data.message || 'Failed to report the issue. Please try again.');
       }
@@ -113,22 +109,14 @@ const CivicIssueForm = () => {
             />
           </div>
           <div>
-            <label htmlFor="longitude">Longitude:</label>
+            <label htmlFor="location">Location:</label>
             <input
-              type="number"
-              id="longitude"
-              value={longitude}
-              onChange={(e) => setLongitude(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="latitude">Latitude:</label>
-            <input
-              type="number"
-              id="latitude"
-              value={latitude}
-              onChange={(e) => setLatitude(e.target.value)}
+              type="text"
+              id="location"
+              name="location"
+              value={formData.location}
+              onChange={handleInputChange}
+              placeholder="Enter location as a string (e.g., '123 Main St, Springfield')"
               required
             />
           </div>

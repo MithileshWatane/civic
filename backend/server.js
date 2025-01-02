@@ -16,27 +16,23 @@ connectDB();
 app.use(cors());
 app.use(bodyParser.json());
 
-
 // Import routes
-const userRoutes = require('./routes/userRoutes'); // Create userRoutes.js
-const governmentRoutes = require('./routes/governmentRoutes'); // Create governmentRoutes.js
-const issueRoutes = require('./routes/issueRoutes'); // Create issueRoutes.js
-const communityRoutes = require('./routes/communityRoutes'); // Create communityRoutes.js
-const authRoutes =  require('./routes/authRoutes'); // Create authRoutes.js
-const governmentAuthorityRoutes = require('./routes/governmentRoutes');
-
-
+const registerRoutes = require('./routes/registerRoutes');
+const governmentRoutes = require('./routes/governmentRoutes');
+const issueRoutes = require('./routes/issueRoutes');
+const communityRoutes = require('./routes/communityRoutes'); // Community routes
+const loginRoutes = require('./routes/loginRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 // Use routes
-app.use('/api/users', userRoutes);
+app.use('/api/register', registerRoutes);
+app.use('/api/auth', loginRoutes);
 app.use('/api/government', governmentRoutes);
-app.use('/api/issues', issueRoutes);
-app.use('/api/community', communityRoutes); 
-app.use('/api/register' , authRoutes)
-app.use('/api/auth', userRoutes); 
-app.use('/api/issues', issueRoutes);
-app.use('/api/government-authorities', governmentAuthorityRoutes);
+app.use('/api/government-authorities', governmentRoutes);
 
+app.use('/api/issues', issueRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/community', communityRoutes); // Use community routes
 
 // Start the server
 app.listen(PORT, () => {

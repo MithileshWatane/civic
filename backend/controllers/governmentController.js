@@ -1,75 +1,41 @@
 const GovernmentAuthority = require('../models/GovernmentAuthority');
 const Issue = require('../models/Issue');
-// Create a government authority account
-const bcrypt = require('bcrypt'); // Import bcrypt for password hashing
+const bcrypt = require('bcrypt');
 
-exports.createGovernmentAccount = async (req, res) => {
-  const { name, department, email, password, location } = req.body;
-
+// Get all government authorities
+exports.getAllGovernmentAuthorities = async (req, res) => {
   try {
-    // Validate required fields
-    if (!name || !department || !email || !password || !location) {
-      return res.status(400).json({ message: 'All fields are required' });
-    }
-
-    // Check if the email is already registered
-    let authority = await GovernmentAuthority.findOne({ email });
-    if (authority) {
-      return res.status(400).json({ message: 'Account already exists' });
-    }
-
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create a new government authority account
-    authority = new GovernmentAuthority({
-      name,
-      department,
-      email,
-      password: hashedPassword, // Save hashed password
-      location,
-    });
-
-    await authority.save();
-    res.status(201).json({ message: 'Account created successfully', authority });
+    const authorities = await GovernmentAuthority.find().select('name department email location');
+    res.status(200).json(authorities);
   } catch (error) {
+    console.error('Error fetching government authorities:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
-
-
-// Get all issues reported to the government authority
+// New method to get reported issues
 exports.getReportedIssues = async (req, res) => {
-  const { authorityId } = req.params;
-
   try {
-    // Fetch all issues tagged to the specific government authority
-    const issues = await Issue.find({ taggedAuthorities: authorityId });
-    res.status(200).json({ message: 'Issues fetched successfully', issues });
+    const issues = await Issue.find(); // Fetch all reported issues
+    res.status(200).json(issues);
   } catch (error) {
+    console.error('Error fetching reported issues:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
-// Update the status of a reported issue
-exports.updateIssueStatus = async (req, res) => {
-  const { status } = req.body;
-  const { issueId } = req.params;
-
+exports.getGovernmentAuthorityById = async (req, res) => {
   try {
-    // Find the issue by its ID
-    const issue = await Issue.findById(issueId);
-    if (!issue) {
-      return res.status(404).json({ message: 'Issue not found' });
+    const { id } = req.params;
+    const authority = await GovernmentAuthority.findById(id).select('name department email location');
+
+    if (!authority) {
+      return res.status(404).json({ message: 'Government authority not found' });
     }
 
-    // Update the issue's status
-    issue.status = status;
-    await issue.save();
-
-    res.status(200).json({ message: 'Issue status updated successfully', issue });
+    res.status(200).json(authority);
   } catch (error) {
+    console.error('Error fetching government authority:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };

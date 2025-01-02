@@ -11,13 +11,15 @@ export const UserProvider = ({ children }) => {
     if (token) setIsLoggedIn(true);
   }, []);
 
-  const login = (token) => {
+  const login = (token, role) => {
     localStorage.setItem('token', token);
+    localStorage.setItem('role', role); // Store the role in local storage
     setIsLoggedIn(true);
   };
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('role'); // Clear the role on logout
     setIsLoggedIn(false);
   };
 

@@ -1,9 +1,14 @@
 const express = require('express');
 const router = express.Router();
+const communityController = require('../controllers/communityController');
 
-// Placeholder for community-related endpoints
-router.get('/', (req, res) => {
-  res.send('Community routes');
-});
+// Project routes
+router.post('/projects', communityController.submitProject);
+router.get('/projects', communityController.getProjects);
+router.post('/projects/:projectId/upvote', communityController.upvoteProject);
+
+// Message routes
+router.post('/messages', communityController.submitMessage);
+router.get('/messages', communityController.getMessages);
 
 module.exports = router;

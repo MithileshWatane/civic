@@ -99,7 +99,13 @@
   border: 1px solid #ccc;
   border-radius: 5px;
 }
-
+.register-card select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
 .register-btn {
   background-color: #007bff; /* Blue button */
   color: white;

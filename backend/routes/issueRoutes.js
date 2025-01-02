@@ -1,13 +1,19 @@
 const express = require('express');
-const { reportIssue, getUserIssues } = require('../controllers/issueController');
-const { authenticateUser } = require('../middleware/authMiddleware');
+const issueController = require('../controllers/issueController');
+const { reportIssue , getIssuesByLoggedInUser , getIssuesByLoggedInGovernmentAuthority, modifyIssue , getAllIssues} = issueController;
+const { authenticateUser , authenticateGovernmentAuthority } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
 // Report an issue
 router.post('/report', authenticateUser, reportIssue);
 
-// Get all issues reported by the user
-router.get('/my-issues', authenticateUser, getUserIssues);
+router.get('/user', authenticateUser, getIssuesByLoggedInUser);
+router.get('/government', authenticateGovernmentAuthority, getIssuesByLoggedInGovernmentAuthority);
+router.get('/get', getAllIssues);
+router.put('/modify/:id' ,authenticateGovernmentAuthority, modifyIssue);
+
+// Route for upvoting an issue
+router.put('/trending/:id/upvote',  issueController.upvoteIssue);
 
 module.exports = router;

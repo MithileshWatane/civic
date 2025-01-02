@@ -156,14 +156,22 @@ export default function Register() {
                       value={formData.location}
                       onChange={handleChange}
                     />
-                    <input
-                      type="text"
-                      name="department"
-                      placeholder="Department"
-                      required
-                      value={formData.department}
-                      onChange={handleChange}
-                    />
+                    <select
+      name="department"
+      required
+      value={formData.department}
+      onChange={handleChange}
+    >
+      <option value="">Select Department</option>
+      <option value="Road safety">Road Safety</option>
+      <option value="Garbage">Garbage</option>
+      <option value="Electricity">Electricity</option>
+      <option value="Water supply">Water Supply</option>
+      <option value="Infrastructural">Infrastructural</option>
+      <option value="Natural disaster">Natural Disaster</option>
+      <option value="Trees related">Trees Related</option>
+      <option value="Animal related">Animal Related</option>
+    </select>
                   </>
                 )}
                 <button type="submit" className="register-btn">

@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { getAllGovernmentAuthorities } = require('../controllers/authController');
+const governmentController = require('../controllers/governmentController');
+const { authenticateGovernmentAuthority } = require('../middleware/authMiddleware'); // Import the correct middleware
 
-
-// Route to fetch government authorities
-router.get('/', getAllGovernmentAuthorities);
+// Route to fetch reported issues for government authorities
+router.get('/reported-issues', authenticateGovernmentAuthority, governmentController.getReportedIssues);
+router.get('/get', governmentController.getAllGovernmentAuthorities);
 
 
 module.exports = router;

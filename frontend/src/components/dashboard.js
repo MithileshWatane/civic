@@ -1,49 +1,105 @@
 import React, { useState, useEffect } from 'react';
 import './styles/dashboard.css';
-// import './styles/main.css';
 import { Link } from 'react-router-dom';
 
-const complaintsData = [
-  { id: 1, domain: 'Road safty', description: 'Potholes on Main Street', status: 'pending' },
-  { id: 2, domain: 'Garbage', description: 'Overflowing bins at the park', status: 'in-progress' },
-  { id: 3, domain: 'Electricity', description: 'Streetlights not working on Elm Road', status: 'resolved' },
-  { id: 4, domain: 'Water supply', description: 'Water leakage near Market Street', status: 'pending' },
-  { id: 5, domain: 'Animal related', description: 'Stray dog near school area', status: 'resolved' },
-];
-
 export default function Dashboard() {
-  const [complaints, setComplaints] = useState(complaintsData);
-  const [filteredComplaints, setFilteredComplaints] = useState(complaintsData);
+  const [complaints, setComplaints] = useState([]);
+  const [filteredComplaints, setFilteredComplaints] = useState([]);
   const [statusFilter, setStatusFilter] = useState('all');
-  const [selectedDomain, setSelectedDomain] = useState('all');
+  const [selectedTitle, setSelectedTitle] = useState(null);
+  const [uniqueTitles, setUniqueTitles] = useState(null);
+  const allStatuses = ['all','in progress', 'resolved', 'reported'];
 
-  // Filter complaints based on domain and status
-  const filterComplaints = (domain, status) => {
-    const filtered = complaintsData.filter(complaint => {
-      const matchesDomain = domain === 'all' || complaint.domain === domain;
-      const matchesStatus = status === 'all' || complaint.status === status;
-      return matchesDomain && matchesStatus;
-    });
+  // Fetch complaints from the API
+  const fetchComplaints = async () => {
+    const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
+    try {
+      const response = await fetch('http://localhost:5000/api/government/reported-issues', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`, // Include the token in the headers
+        },
+      });
+      const data = await response.json();
+      setComplaints(data);
+      setFilteredComplaints(data);
+
+      // Remove duplicate titles
+      const uniqueTitles = [...new Set(data.map(complaint => complaint.title))];
+      setUniqueTitles(uniqueTitles);
+    } catch (error) {
+      console.error('Error fetching complaints:', error);
+    }
+  };
+
+  // Change the status of an issue
+  const changeStatus = async (id, newStatus) => {
+    const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
+    try {
+      const response = await fetch(`http://localhost:5000/api/issues/modify/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // Include the token in the headers
+        },
+        body: JSON.stringify({ status: newStatus }), // Send the new status
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update status');
+      }
+
+      const updatedComplaint = await response.json();
+      // Update the local state to reflect the new status
+      setComplaints((prevComplaints) =>
+        prevComplaints.map((complaint) =>
+          complaint._id === updatedComplaint.updatedIssue._id ? updatedComplaint.updatedIssue : complaint
+        )
+      );
+      fetchComplaints(); // Re-fetch complaints to ensure the latest data
+    } catch (error) {
+      console.error('Error changing status:', error);
+    }
+  };
+
+  // Filter complaints based on status
+  const filterComplaintsByStatus = (status) => {
+    const filtered = complaints.filter(
+      (complaint) => status === 'all' || complaint.status === status
+    );
     setFilteredComplaints(filtered);
+    setSelectedTitle(null); // Reset title filter when status changes
+  };
+
+  // Filter complaints by title with deselect functionality
+  const filterComplaintsByTitle = (title) => {
+    if (selectedTitle === title) {
+      // Deselect if the same title is clicked
+      setSelectedTitle(null);
+      filterComplaintsByStatus(statusFilter); // Reset to status filter
+    } else {
+      const filtered = complaints.filter((complaint) => complaint.title === title);
+      setFilteredComplaints(filtered);
+      setSelectedTitle(title); // Highlight the newly selected title
+    }
   };
 
   useEffect(() => {
-    filterComplaints(selectedDomain, statusFilter);
-  }, [selectedDomain, statusFilter]);
+    fetchComplaints(); // Fetch complaints on component mount
+  }, []);
+
+  useEffect(() => {
+    filterComplaintsByStatus(statusFilter); // Apply status filter whenever it changes
+  }, [statusFilter, complaints]);
 
   return (
     <>
       <nav className="navbar">
         <div className="logo">CivicConnect</div>
         <ul>
-        <li><Link to="/">Home</Link></li>
-
-        <li>
-              <Link to="/complaints">Report Issues</Link>
-            </li>
-            <li>
-              <Link to="/login">Login</Link>
-            </li>
+          <li><Link to="/">Home</Link></li>
+          <li><Link to="/issue">Report Issues</Link></li>
+          <li><Link to="/login">Login</Link></li>
         </ul>
       </nav>
       <section className="dashboard">
@@ -55,38 +111,65 @@ export default function Dashboard() {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
-            <option value="all">All</option>
-            <option value="pending">Pending</option>
-            <option value="in-progress">In Progress</option>
-            <option value="resolved">Resolved</option>
+            {allStatuses.map((status) => (
+              <option key={status} value={status}>
+                {status.charAt(0).toUpperCase() + status.slice(1)}
+              </option>
+            ))}
           </select>
         </div>
-        <div className="complaint-sections">
-          <h2>Complaint Domains</h2>
-          <div className="complaint-categories">
-            <button className="category-btn" onClick={() => setSelectedDomain('road')}>Road safety</button>
-            <button className="category-btn" onClick={() => setSelectedDomain('garbage')}>Garbage</button>
-            <button className="category-btn" onClick={() => setSelectedDomain('electricity')}>Electricity</button>
-            <button className="category-btn" onClick={() => setSelectedDomain('water')}>Water supply</button>
-            <button className="category-btn" onClick={() => setSelectedDomain('building')}>Infrastructural</button>
-            <button className="category-btn" onClick={() => setSelectedDomain('nature')}>Natural disaster</button>
-            <button className="category-btn" onClick={() => setSelectedDomain('trees')}>Trees related</button>
-            <button className="category-btn" onClick={() => setSelectedDomain('animal')}>Animal related</button>
-          </div>
-          <div id="complaintsContainer" className="complaints-container">
+        <div className="titles-section">
+          <h2>Titles</h2>
+          <div className="titles-buttons">
             {filteredComplaints.length > 0 ? (
-              filteredComplaints.map((complaint) => (
-                <div key={complaint.id} className="complaint-card">
-                  <h3>{complaint.domain}</h3>
-                  <p>{complaint.description}</p>
-                  <p className="complaint-status">Status: {complaint.status.charAt(0).toUpperCase() + complaint.status.slice(1)}</p>
-                </div>
+              [...new Set(filteredComplaints.map((complaint) => complaint.title))].map((title) => (
+                <button
+                  key={title}
+                  className={`category-btn ${selectedTitle === title ? 'selected' : ''}`}
+                  onClick={() => filterComplaintsByTitle(title)}
+                >
+                  {title}
+                </button>
               ))
             ) : (
-              <p>No complaints found.</p>
+              <p>No complaints found for the selected status.</p>
             )}
           </div>
         </div>
+        <div id="complaintsContainer" className="complaints-container">
+  <h2>Complaint Details</h2>
+  {filteredComplaints.length > 0 ? (
+    filteredComplaints.map((complaint) => (
+      <div key={complaint._id} className="complaint-card">
+        <h3>{complaint.title}</h3>
+        <p>{complaint.description}</p>
+        <p><strong>Location:</strong> {complaint.location}</p>
+        <p className="complaint-status">
+          <strong>Status:</strong> {complaint.status.charAt(0).toUpperCase() + complaint.status.slice(1)}
+        </p>
+        <label htmlFor={`status-select-${complaint._id}`} className="status-label">
+  Change Status:
+</label>
+<select
+  id={`status-select-${complaint._id}`}
+  value={complaint.status}
+  onChange={(e) => changeStatus(complaint._id, e.target.value)}
+  className="status-dropdown"
+>
+  {allStatuses.filter((status) => status !== 'all').map((status) => (
+    <option key={status} value={status}>
+      {status.charAt(0).toUpperCase() + status.slice(1)}
+    </option>
+  ))}
+</select>
+
+      </div>
+    ))
+  ) : (
+    <p>No complaints found for the selected title.</p>
+  )}
+</div>
+
       </section>
       <footer>
         <p>© 2024 CivicConnect. All Rights Reserved.</p>
