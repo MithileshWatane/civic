@@ -88,22 +88,66 @@ exports.getReportedIssues = async (req, res) => {
  * Upvote an issue
  */
 exports.upvoteIssue = async (req, res) => {
-    try {
-        const issueId = req.params.id; // Get the issue ID from the request parameters
-        const issue = await Issue.findById(issueId); // Find the issue by ID
+  const { id } = req.params; // Get the issue ID from the URL
+  const { title, description, location, governmentAuthority, status, upvote } = req.body; // Get updated data and upvote action from the request body
 
-        if (!issue) {
-            return res.status(404).json({ message: 'Issue not found' });
-        }
-
-        issue.votes += 1; // Increment the vote count
-        await issue.save(); // Save the updated issue
-
-        return res.status(200).json({ message: 'Issue upvoted successfully', votes: issue.votes });
-    } catch (error) {
-        return res.status(500).json({ message: 'Server error', error: error.message });
+  try {
+    // Ensure req.user is defined
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: 'Unauthorized: User not authenticated' });
     }
+
+    const userId = req.user.id; // User ID of the authenticated user
+
+    // Check if the request is to modify general issue details or upvote
+    if (upvote) {
+      // Find the issue by ID
+      const issue = await Issue.findById(id);
+
+      if (!issue) {
+        return res.status(404).json({ message: 'Issue not found' });
+      }
+
+      // Check if the user has already upvoted
+      if (issue.upvotedBy.includes(userId)) {
+        return res.status(400).json({ message: 'You have already upvoted this issue' });
+      }
+
+      // Increment vote count and add the user to the upvotedBy array
+      issue.votes += 1;
+      issue.upvotedBy.push(userId);
+      await issue.save();
+
+      return res.status(200).json({
+        message: 'Issue upvoted successfully',
+        votes: issue.votes,
+      });
+    }
+
+    // If not an upvote, modify issue details
+    const updatedIssue = await Issue.findByIdAndUpdate(
+      id,
+      { title, description, location, governmentAuthority, status },
+      { new: true, runValidators: true } // Return the updated document and run validators
+    );
+
+    if (!updatedIssue) {
+      return res.status(404).json({ message: 'Issue not found' });
+    }
+
+    res.status(200).json({
+      message: 'Issue updated successfully',
+      updatedIssue,
+    });
+  } catch (error) {
+    console.error('Error modifying issue:', error);
+    res.status(500).json({
+      message: 'Server error',
+      error: error.message,
+    });
+  }
 };
+
 
 exports.modifyIssue = async (req, res) => {
   const { id } = req.params; // Get the issue ID from the URL

@@ -117,24 +117,7 @@ export default function CommunityUpdated() {
         </div>
       </section>
 
-      <section className="chat-section">
-        <h2>Join the Discussion</h2>
-        <div className="chat-box">
-          <textarea
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Type your message..."
-            rows={3}
-          />
-          <button className="btn" onClick={handleSendMessage}>Send</button>
-        </div>
-        <div className="chat-history">
-          {messages.map((msg, index) => (
-            <p key={index}><strong>{msg.user}:</strong> {msg.text}</p>
-          ))}
-        </div>
-      </section>
-
+      
       <footer>
         <p>© 2024 CivicConnect. All Rights Reserved.</p>
       </footer>

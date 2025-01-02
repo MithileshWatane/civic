@@ -14,6 +14,6 @@ router.get('/get', getAllIssues);
 router.put('/modify/:id' ,authenticateGovernmentAuthority, modifyIssue);
 
 // Route for upvoting an issue
-router.put('/trending/:id/upvote',  issueController.upvoteIssue);
+router.put('/trending/:id/upvote',  authenticateUser,issueController.upvoteIssue);
 
 module.exports = router;

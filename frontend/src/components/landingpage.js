@@ -224,6 +224,65 @@ export default function App() {
           </div>
           </div>
         )}
+         {role === 'citizen' && (
+         <div class="features">
+    
+    
+      
+            
+         <div class="card">
+           <div class="card-image"></div>
+           <div class="card-content" onClick={handleReportIssueClick1}>
+           <h3>Report Issues</h3>
+             <p>Quickly report civic issues affecting your community.</p>
+             <Link to="/" className="btn" >
+               Get Started
+             </Link>
+           </div>
+         </div>
+       
+      
+       <div class="card">
+           <div class="card-image"></div>
+           <div class="card-content" onClick={handleReportIssueClick2}>
+           <h3>Trending Issues</h3>
+             <p>Stay updated on the most discussed issues in your area.</p>
+             <Link to="/" className="btn">
+               Explore Now
+             </Link>
+           </div>
+         </div>
+         <div class="card">
+           <div class="card-image"></div>
+           <div class="card-content" onClick={handleReportIssueClick3}>
+           <h3>Funding</h3>
+             <p>Support community-driven change by contributing to civic solutions</p>
+             <Link to="/" className="btn">
+               Funds
+             </Link>
+           </div>
+         </div><div class="card">
+           <div class="card-image"></div>
+           <div class="card-content" onClick={handleReportIssueClick4}>
+           <h3>Track Progress</h3>
+             <p>Monitor reported issues in real-time.</p>
+             <Link to="/" className="btn">
+               Check Status
+             </Link>
+           </div>
+         </div><div class="card">
+           <div class="card-image"></div>
+           <div class="card-content" onClick={handleReportIssueClick3}>
+           <h3>Community Engagement</h3>
+             <p>Connect with other citizens and participate in discussions.</p>
+             <Link to="/" className="btn">
+               Join Us
+             </Link>
+           </div>
+       
+          </div>
+          </div>
+        )}
       </div>
 
       <footer id="contact">
