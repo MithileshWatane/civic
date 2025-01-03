@@ -137,21 +137,19 @@ body {
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-width: 80%;  
-height: 400px;
-margin: 20px auto;
+  width: 75%;  
+  height: 400px;  
+  margin: 20px auto;
 }
 
 .card-image {
-  flex: 1;
-  /* background-image: url('path-to-image.jpg'); Replace with the actual image path */
   background-size: cover;
   background-position: center;
-  width: 50%;
+  width: 40%;
   height: 70%; /* Set a fixed height */
   border-radius: 10px 0 0 10px; /* Rounded corners for the left side */
   margin-left: 20px;
-  margin-right: 20px;
+  margin-right: 30px;
 
 }
 
@@ -160,12 +158,13 @@ margin: 20px auto;
   padding: 20px;
   flex-direction: column;
   justify-content: center;
+  width: 80%;
 }
 
 .card-content h3 {
   font-size: 1.5rem;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
   color: #333; /* Main text color */
 }
 
@@ -229,7 +228,7 @@ footer {
 }
 
 .card:nth-child(2) .card-image {
-  background-image: url('trending.jpg');
+  background-image: url('trending4.jpg');
 }
 
 .card:nth-child(3) .card-image {

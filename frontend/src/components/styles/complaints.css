@@ -110,3 +110,52 @@ body {
   background-color: #1c1e20; /* Dark blue on hover */
   transform: translateY(-2px);
 }
+
+.footer {
+  padding: 20px 0;
+}
+
+.footer-heading {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+
+.footer-link {
+  margin-top: 10px;
+}
+
+.footer-link a {
+  font-size: 0.95rem;
+  transition: color 0.3s;
+}
+
+.footer-link a:hover {
+  color: #f0e68c;
+}
+
+.list-inline-item a {
+  font-size: 1.2rem;
+  padding: 5px 10px;
+  border-radius: 50%;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.list-inline-item a:hover {
+  color: #ffffff;
+  background-color: #343a40;
+}
+
+.contact address,
+.contact a {
+  font-size: 0.95rem;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.bg-danger {
+  background-color: #dc3545 !important;
+}
+
+.bg-dark {
+  background-color: #343a40 !important;
+}

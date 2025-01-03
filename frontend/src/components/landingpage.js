@@ -199,7 +199,8 @@ export default function App() {
           )}
         </ul>
       </nav>
-
+  
+      {role === 'citizen' && (
       <header className="hero">
         <div className="overlay" />
         <div className="hero-content" >
@@ -210,7 +211,17 @@ export default function App() {
           </Link>
         </div>
       </header>
-
+      )}
+      {role === 'government' && (
+      <header className="hero">
+        <div className="overlay" />
+        <div className="hero-content" >
+          <h1>'Empower Your Voice'</h1>
+          <p>Report issues, track progress, and improve your community.</p>
+          
+        </div>
+      </header>
+      )}
       
 
     <div>
@@ -284,7 +295,7 @@ export default function App() {
            <div class="card-image"></div>
            <div class="card-content" onClick={handleReportIssueClick1}>
            <h3>Report Issues</h3>
-             <p>Quickly report civic issues affecting your community.</p>
+             <p>Quickly and effortlessly report civic issues affecting your community to ensure a cleaner, safer, and better place for everyone around you.</p>
              <Link to="/" className="btn" >
                Get Started
              </Link>
@@ -296,7 +307,7 @@ export default function App() {
            <div class="card-image"></div>
            <div class="card-content" onClick={handleReportIssueClick2}>
            <h3>Trending Issues</h3>
-             <p>Stay updated on the most discussed issues in your area.</p>
+             <p>Stay updated on the most discussed issues in your area and get the latest insights to understand what's impacting your community and how you can stay informed.</p>
              <Link to="/" className="btn">
                Explore Now
              </Link>
