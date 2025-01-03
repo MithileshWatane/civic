@@ -114,62 +114,86 @@ body {
   background-color: #cce7ff; /* Light blue */
   transform: translateY(-3px);
 }
-
 .features {
-  display: grid;
-  margin-left: 60px;
-  margin-right: 60px;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
-  padding: 2rem;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  gap: 20px; /* Space between cards if there are multiple */
 }
-.card {
-  background-color: #ffffff; /* White */
-  border: 1px solid #d1d1d1;
-  border-radius: 10px;
-  padding: 0; /* Remove padding to handle layout */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+.features h1{
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  gap: 20px; /* Space between cards if there are multiple */
+  margin-left: 150px;
+  margin-top: 50px;
 }
 
-.card:hover {
-  transform: translateY(-5px);
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f9f9f9; /* Background color for the card */
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+width: 80%;  
+height: 400px;
+margin: 20px auto;
 }
 
 .card-image {
-  height: 200px;
+  flex: 1;
+  /* background-image: url('path-to-image.jpg'); Replace with the actual image path */
   background-size: cover;
   background-position: center;
+  width: 50%;
+  height: 70%; /* Set a fixed height */
+  border-radius: 10px 0 0 10px; /* Rounded corners for the left side */
+  margin-left: 20px;
+  margin-right: 20px;
+
 }
 
 .card-content {
-  padding: 1rem; /* Decrease padding */
-  display: flex;
+  flex: 1;
+  padding: 20px;
   flex-direction: column;
   justify-content: center;
-  flex-grow: 1;
 }
 
 .card-content h3 {
-  margin: 0 0 0.2rem; /* Reduce margin between heading and text */
   font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333; /* Main text color */
 }
 
 .card-content p {
-  margin-bottom: 0.5rem; /* Reduce space between paragraph and button */
-  flex-grow: 1;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  color: #555; /* Subtext color */
 }
 
 .card-content .btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /* margin-top: 0.5rem; */
-  /* align-self: center; Center the button */
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #3970d0; /* Button background color */
+  border: none;
+  border-radius: 5px;
+  text-decoration: none; /* Remove underline */
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
+
+.card-content .btn:hover {
+  background-color: #5a1283; /* Darker hover effect */
+}
+
 
 
 footer {

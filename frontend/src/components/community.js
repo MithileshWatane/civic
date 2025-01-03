@@ -9,15 +9,12 @@ export default function CommunityUpdated() {
   const [description, setDescription] = useState('');
   const [projects, setProjects] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [contributionAmount, setContributionAmount] = useState('');
-  const [messages, setMessages] = useState([
-    { user: 'User1', text: 'Excited about the new park project!' },
-    { user: 'User2', text: 'Let’s raise the funds together!' }
-  ]);
-  const [newMessage, setNewMessage] = useState('');
+  const [volunteeredProjects, setVolunteeredProjects] = useState(new Set());
+
 
   useEffect(() => {
     fetchProjects();
+    loadVolunteeredProjects();
   }, []);
 
   const fetchProjects = async () => {
@@ -33,22 +30,25 @@ export default function CommunityUpdated() {
     setGoalAmount('');
     setDescription('');
   };
+  const loadVolunteeredProjects = () => {
+    const storedProjects = localStorage.getItem('volunteeredProjects');
+    if (storedProjects) {
+      setVolunteeredProjects(new Set(JSON.parse(storedProjects)));
+    }
+  };
+
+  const saveVolunteeredProjects = (newProjects) => {
+    localStorage.setItem('volunteeredProjects', JSON.stringify([...newProjects]));
+  };
 
   const handleContribution = async (projectId) => {
-    if (contributionAmount.trim()) {
-      await axios.post(`http://localhost:5000/api/community/projects/${projectId}/contribute`, { amount: contributionAmount });
-      fetchProjects(); // Refresh the project list to update funding
-      setContributionAmount(''); // Clear the input field
-    }
+    await axios.post(`http://localhost:5000/api/community/projects/${projectId}/contribute`, { amount: 1 });
+    const updatedProjects = new Set([...volunteeredProjects, projectId]);
+    setVolunteeredProjects(updatedProjects);
+    saveVolunteeredProjects(updatedProjects);
+    fetchProjects(); // Refresh the project list to update funding
   };
 
-  const handleSendMessage = async () => {
-    if (newMessage.trim()) {
-      await axios.post('/api/community/messages', { user: 'You', text: newMessage });
-      setMessages([...messages, { user: 'You', text: newMessage }]);
-      setNewMessage('');
-    }
-  };
 
   return (
     <>
@@ -86,7 +86,7 @@ export default function CommunityUpdated() {
               required
               placeholder="Enter project name"
             />
-            <label htmlFor="goalAmount">Funding Goal ($):</label>
+            <label htmlFor="goalAmount">Volunteer Required ($):</label>
             <input
               type="number"
               id="goalAmount"
@@ -108,7 +108,6 @@ export default function CommunityUpdated() {
           </form>
         )}
       </section>
-
       <section className="monitoring-section">
         <h2>Monitor Your Contributions</h2>
         <p>Keep track of the projects you support. Stay informed about progress and updates.</p>
@@ -116,7 +115,7 @@ export default function CommunityUpdated() {
           {projects.map((project) => (
             <div className="project-card" key={project._id}>
               <h3>{project.name}</h3>
-              <p>Goal: ${project.goalAmount} | Current Funding: ${project.funding}</p>
+              <p>Volunteer Required: {project.goalAmount} | Active participate: {project.funding}</p>
               <div className="progress-bar">
                 <div
                   className="progress"
@@ -126,22 +125,16 @@ export default function CommunityUpdated() {
                 />
               </div>
               <p className="progress-text">
-                {Math.min((project.funding / project.goalAmount) * 100, 100).toFixed(2)}% Funded
+                {Math.min((project.funding / project.goalAmount) * 100, 100).toFixed(2)}% completed
               </p>
               {project.funding >= project.goalAmount ? (
                 <p className="goal-completed">Goal is Completed</p>
+              ) : volunteeredProjects.has(project._id) ? (
+                <p className="already-volunteered">You have volunteered</p>
               ) : (
-                <>
-                  <input
-                    type="number"
-                    value={contributionAmount}
-                    onChange={(e) => setContributionAmount(e.target.value)}
-                    placeholder="Enter contribution amount"
-                  />
-                  <button onClick={() => handleContribution(project._id)} className="btn">
-                    Contribute
-                  </button>
-                </>
+                <button onClick={() => handleContribution(project._id)} className="btn">
+                  Volunteer
+                </button>
               )}
             </div>
           ))}
