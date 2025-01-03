@@ -9,7 +9,7 @@ const issueSchema = new mongoose.Schema({
   status: { type: String, enum: ['reported', 'in progress', 'resolved'], default: 'reported' },
   createdAt: { type: Date, default: Date.now },
   votes: { type: Number, default: 0 } ,// New field to store the number of votes
-  upvotedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs
+  upvotedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Array to store user IDs
   
 });
 
