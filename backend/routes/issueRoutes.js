@@ -9,7 +9,7 @@ const router = express.Router();
 router.post('/report', authenticateUser, reportIssue);
 
 router.get('/user', authenticateUser, getIssuesByLoggedInUser);
-router.get('/government', authenticateGovernmentAuthority, getIssuesByLoggedInGovernmentAuthority);
+router.get('/reported-issues', authenticateGovernmentAuthority, getIssuesByLoggedInGovernmentAuthority);
 router.get('/get', getAllIssues);
 router.put('/modify/:id' ,authenticateGovernmentAuthority, modifyIssue);
 

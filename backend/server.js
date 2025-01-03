@@ -28,6 +28,8 @@ const userRoutes = require('./routes/userRoutes');
 app.use('/api/register', registerRoutes);
 app.use('/api/auth', loginRoutes);
 app.use('/api/government', governmentRoutes);
+app.use('/api/governmentid', issueRoutes);
+
 app.use('/api/government-authorities', governmentRoutes);
 
 app.use('/api/issues', issueRoutes);

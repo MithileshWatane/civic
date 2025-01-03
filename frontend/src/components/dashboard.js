@@ -19,40 +19,45 @@ export default function Dashboard() {
   const allStatuses = ['all', 'in progress', 'resolved', 'reported'];
   const COLORS = ['#8884d8', '#82ca9d', '#ffc658'];
 
-  // Fetch complaints from the API
   const fetchComplaints = async () => {
     const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
     try {
-      const response = await fetch('http://localhost:5000/api/government/reported-issues', {
+      const response = await fetch('http://localhost:5000/api/governmentid/reported-issues', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`, // Include the token in the headers
         },
       });
       const data = await response.json();
-      setComplaints(data);
-      setFilteredComplaints(data);
-
-      // Calculate issue counts
-      const reported = data.filter((complaint) => complaint.status === 'reported').length;
-      const inProgress = data.filter((complaint) => complaint.status === 'in progress').length;
-      const resolved = data.filter((complaint) => complaint.status === 'resolved').length;
-
-      setIssueCounts({
-        total: data.length,
-        reported,
-        inProgress,
-        resolved,
-      });
-
-      // Remove duplicate titles
-      const uniqueTitles = [...new Set(data.map((complaint) => complaint.title))];
-      setUniqueTitles(uniqueTitles);
+      
+      // Ensure the issues array exists in the response data
+      if (Array.isArray(data.issues)) {
+        setComplaints(data.issues);
+        setFilteredComplaints(data.issues);
+  
+        // Calculate issue counts
+        const reported = data.issues.filter((complaint) => complaint.status === 'reported').length;
+        const inProgress = data.issues.filter((complaint) => complaint.status === 'in progress').length;
+        const resolved = data.issues.filter((complaint) => complaint.status === 'resolved').length;
+  
+        setIssueCounts({
+          total: data.issues.length,
+          reported,
+          inProgress,
+          resolved,
+        });
+  
+        // Remove duplicate titles
+        const uniqueTitles = [...new Set(data.issues.map((complaint) => complaint.title))];
+        setUniqueTitles(uniqueTitles);
+      } else {
+        console.error('Issues is not an array:', data.issues);
+      }
     } catch (error) {
       console.error('Error fetching complaints:', error);
     }
   };
-
+  
   // Other functions (unchanged for filtering and status update)
 
   const chartData = [
