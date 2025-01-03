@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import './styles/dashboard.css';
 import { Link } from 'react-router-dom';
 
@@ -8,7 +9,15 @@ export default function Dashboard() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedTitle, setSelectedTitle] = useState(null);
   const [uniqueTitles, setUniqueTitles] = useState(null);
-  const allStatuses = ['all','in progress', 'resolved', 'reported'];
+  const [issueCounts, setIssueCounts] = useState({
+    total: 0,
+    reported: 0,
+    inProgress: 0,
+    resolved: 0,
+  });
+
+  const allStatuses = ['all', 'in progress', 'resolved', 'reported'];
+  const COLORS = ['#8884d8', '#82ca9d', '#ffc658'];
 
   // Fetch complaints from the API
   const fetchComplaints = async () => {
@@ -24,15 +33,62 @@ export default function Dashboard() {
       setComplaints(data);
       setFilteredComplaints(data);
 
+      // Calculate issue counts
+      const reported = data.filter((complaint) => complaint.status === 'reported').length;
+      const inProgress = data.filter((complaint) => complaint.status === 'in progress').length;
+      const resolved = data.filter((complaint) => complaint.status === 'resolved').length;
+
+      setIssueCounts({
+        total: data.length,
+        reported,
+        inProgress,
+        resolved,
+      });
+
       // Remove duplicate titles
-      const uniqueTitles = [...new Set(data.map(complaint => complaint.title))];
+      const uniqueTitles = [...new Set(data.map((complaint) => complaint.title))];
       setUniqueTitles(uniqueTitles);
     } catch (error) {
       console.error('Error fetching complaints:', error);
     }
   };
 
-  // Change the status of an issue
+  // Other functions (unchanged for filtering and status update)
+
+  const chartData = [
+    { name: 'Reported', count: issueCounts.reported },
+    { name: 'In Progress', count: issueCounts.inProgress },
+    { name: 'Resolved', count: issueCounts.resolved },
+  ];
+
+  useEffect(() => {
+    fetchComplaints(); // Fetch complaints on component mount
+  }, []);
+
+  useEffect(() => {
+    filterComplaintsByStatus(statusFilter); // Apply status filter whenever it changes
+  }, [statusFilter, complaints]);
+
+  const filterComplaintsByStatus = (status) => {
+    const filtered = complaints.filter(
+      (complaint) => status === 'all' || complaint.status === status
+    );
+    setFilteredComplaints(filtered);
+    setSelectedTitle(null); // Reset title filter when status changes
+  };
+  
+  const filterComplaintsByTitle = (title) => {
+    if (selectedTitle === title) {
+      // Deselect if the same title is clicked
+      setSelectedTitle(null);
+      filterComplaintsByStatus(statusFilter); // Reset to status filter
+    } else {
+      const filtered = complaints.filter((complaint) => complaint.title === title);
+      setFilteredComplaints(filtered);
+      setSelectedTitle(title); // Highlight the newly selected title
+    }
+  };
+  
   const changeStatus = async (id, newStatus) => {
     const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
     try {
@@ -44,11 +100,11 @@ export default function Dashboard() {
         },
         body: JSON.stringify({ status: newStatus }), // Send the new status
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to update status');
       }
-
+  
       const updatedComplaint = await response.json();
       // Update the local state to reflect the new status
       setComplaints((prevComplaints) =>
@@ -61,37 +117,7 @@ export default function Dashboard() {
       console.error('Error changing status:', error);
     }
   };
-
-  // Filter complaints based on status
-  const filterComplaintsByStatus = (status) => {
-    const filtered = complaints.filter(
-      (complaint) => status === 'all' || complaint.status === status
-    );
-    setFilteredComplaints(filtered);
-    setSelectedTitle(null); // Reset title filter when status changes
-  };
-
-  // Filter complaints by title with deselect functionality
-  const filterComplaintsByTitle = (title) => {
-    if (selectedTitle === title) {
-      // Deselect if the same title is clicked
-      setSelectedTitle(null);
-      filterComplaintsByStatus(statusFilter); // Reset to status filter
-    } else {
-      const filtered = complaints.filter((complaint) => complaint.title === title);
-      setFilteredComplaints(filtered);
-      setSelectedTitle(title); // Highlight the newly selected title
-    }
-  };
-
-  useEffect(() => {
-    fetchComplaints(); // Fetch complaints on component mount
-  }, []);
-
-  useEffect(() => {
-    filterComplaintsByStatus(statusFilter); // Apply status filter whenever it changes
-  }, [statusFilter, complaints]);
-
+  
   return (
     <>
       <nav className="navbar">
@@ -102,6 +128,80 @@ export default function Dashboard() {
       </nav>
       <section className="dashboard">
         <h1>Authority Dashboard</h1>
+
+
+        <div className="bc">
+
+        <div className="a">
+
+{/* Visualization Section */}
+<div className="visualization-section">
+  <h2>Issue Overview</h2>
+  <div className="charts">
+    {/* Bar Chart */}
+    <div className="bar-chart">
+      <h3>Issue Counts</h3>
+      <ResponsiveContainer width="100%" height={250}>
+        <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+          <defs>
+            <linearGradient id="colorBar" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#82ca9d" stopOpacity={0.8} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip
+            contentStyle={{ backgroundColor: '#f4f4f4', border: 'none', borderRadius: '8px' }}
+            itemStyle={{ fontSize: '12px' }}
+            formatter={(value) => [`${value} Issues`, 'Count']}
+          />
+          <Bar dataKey="count" fill="url(#colorBar)" radius={[10, 10, 0, 0]}>
+            {chartData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+    {/* Doughnut Chart */}
+    <div className="pie-chart">
+      <h3>Issue Distribution</h3>
+      <ResponsiveContainer width="100%" height={250}>
+        <PieChart>
+          <Pie
+            data={chartData}
+            dataKey="count"
+            nameKey="name"
+            cx="50%"
+            cy="50%"
+            innerRadius={60}
+            outerRadius={90}
+            paddingAngle={5}
+            fill="#82ca9d"
+            label={({ name, count }) => `${name}: ${count}`}
+          >
+            {chartData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip
+            contentStyle={{ backgroundColor: '#f4f4f4', border: 'none', borderRadius: '8px' }}
+            formatter={(value, name) => [`${value} Issues`, name]}
+          />
+          <Legend iconSize={10} layout="horizontal" verticalAlign="bottom" align="center" />
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<div className="b">
+
+        {/* Existing Content */}
         <div className="filters">
           <label htmlFor="statusFilter">Filter by Status:</label>
           <select
@@ -135,40 +235,43 @@ export default function Dashboard() {
           </div>
         </div>
         <div id="complaintsContainer" className="complaints-container">
-  <h2>Complaint Details</h2>
-  {filteredComplaints.length > 0 ? (
-    filteredComplaints.map((complaint) => (
-      <div key={complaint._id} className="complaint-card">
-        <h3>{complaint.title}</h3>
-        <p>{complaint.description}</p>
-        <p><strong>Location:</strong> {complaint.location}</p>
-        <p className="complaint-status">
-          <strong>Status:</strong> {complaint.status.charAt(0).toUpperCase() + complaint.status.slice(1)}
-        </p>
-        <label htmlFor={`status-select-${complaint._id}`} className="status-label">
-  Change Status:
-</label>
-<select
-  id={`status-select-${complaint._id}`}
-  value={complaint.status}
-  onChange={(e) => changeStatus(complaint._id, e.target.value)}
-  className="status-dropdown"
->
-  {allStatuses.filter((status) => status !== 'all').map((status) => (
-    <option key={status} value={status}>
-      {status.charAt(0).toUpperCase() + status.slice(1)}
-    </option>
-  ))}
-</select>
-
-      </div>
-    ))
-  ) : (
-    <p>No complaints found for the selected title.</p>
-  )}
-</div>
+          <h2>Complaint Details</h2>
+          {filteredComplaints.length > 0 ? (
+            filteredComplaints.map((complaint) => (
+              <div key={complaint._id} className="complaint-card">
+                <h3>{complaint.title}</h3>
+                <p>{complaint.description}</p>
+                <p><strong>Location:</strong> {complaint.location}</p>
+                <p className="complaint-status">
+                  <strong>Status:</strong> {complaint.status.charAt(0).toUpperCase() + complaint.status.slice(1)}
+                </p>
+                <label htmlFor={`status-select-${complaint._id}`} className="status-label">
+                  Change Status:
+                </label>
+                <select
+                  id={`status-select-${complaint._id}`}
+                  value={complaint.status}
+                  onChange={(e) => changeStatus(complaint._id, e.target.value)}
+                  className="status-dropdown"
+                >
+                  {allStatuses.filter((status) => status !== 'all').map((status) => (
+                    <option key={status} value={status}>
+                      {status.charAt(0).toUpperCase() + status.slice(1)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ))
+          ) : (
+            <p>No complaints found for the selected title.</p>
+          )}
+        </div>
+        </div>
+        </div>
 
       </section>
+
+
       <footer>
         <p>© 2024 CivicConnect. All Rights Reserved.</p>
       </footer>

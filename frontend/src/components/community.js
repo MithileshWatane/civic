@@ -55,11 +55,12 @@ export default function CommunityUpdated() {
       <nav className="navbar">
         <div className="logo">CivicConnect</div>
         <ul>
-          <li><Link to="/">Home</Link></li>
           <li>
-                          <Link to="/issue">Report Issues</Link>
-                        </li>
-                                  <li><Link to="/trending">Trending Issues</Link></li>
+            <Link to="/">Home</Link></li>
+          <li>
+             <Link to="/issue">Report Issues</Link>
+          </li>
+          <li><Link to="/trending">Trending Issues</Link></li>
                         
         </ul>
       </nav>
@@ -144,7 +145,7 @@ export default function CommunityUpdated() {
           ))}
         </div>
       </section>
-      
+
       <footer>
         <p>© 2024 CivicConnect. All Rights Reserved.</p>
       </footer>

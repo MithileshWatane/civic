@@ -53,12 +53,13 @@ body {
 /* Dashboard Section */
 .dashboard {
   max-width: 1200px;
-  margin: 20px auto;
+  margin: 60px auto;
   padding: 20px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease;
+  
 }
 
 .dashboard:hover {
@@ -138,6 +139,7 @@ body {
 
 /* Complaints Container */
 .complaints-container {
+  padding: 30px;
   flex-wrap: wrap;
   width: 100%;
   gap: 20px;
@@ -148,7 +150,7 @@ body {
   background-color: #f4f4f9;
   margin-top: 10px;
   padding: 15px;
-  width: 1150px;
+  width: 500px;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -249,4 +251,60 @@ footer p {
 
 .complaint-card .status-dropdown:hover {
   border-color: #0056b3; /* Darker blue border on hover */
+}
+
+.bc{
+  display: flex;
+}
+.a{
+  width: 50%;
+  width: fit-content;
+
+}
+
+.b{
+  padding-top: 30px;
+
+}
+.visualization-section {
+  margin: 20px 0;
+}
+
+.charts {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping for smaller screens */
+  gap: 20px; /* Better spacing between charts */
+}
+
+.bar-chart,
+.pie-chart {
+  flex: 1; /* Distribute space equally */
+  min-width: 300px; /* Minimum width for responsive design */
+  margin: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  /* padding: 20px; More padding for better appearance */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth animations */
+}
+
+.bar-chart:hover,
+.pie-chart:hover {
+  transform: scale(1.02); /* Subtle zoom effect on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.bar-chart h3,
+.pie-chart h3 {
+  font-size: 18px; /* Slightly larger font size */
+  margin-bottom: 15px; /* Better spacing */
+  text-align: center;
+  color: #333; /* Darker text for better readability */
+}
+
+
+/* Example of minimizing layout recalculations */
+.resizable-element {
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }

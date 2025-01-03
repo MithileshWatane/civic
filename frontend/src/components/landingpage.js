@@ -319,7 +319,7 @@ export default function App() {
            <h3>Volunteering </h3>
            <p>Contribute your time and skills to initiatives that aim to enhance our community. Together, we can achieve great things through collective effort and dedication!</p>
              <Link to="/" className="btn">
-               Funds
+               Contribute
              </Link>
            </div>
          </div><div class="card">
