@@ -7,7 +7,6 @@ export default function Trending() {
   const [trendingIssues, setTrendingIssues] = useState([]);
   const [upvotedIssues, setUpvotedIssues] = useState(new Set());
 
-  // Load upvoted issues from local storage
   useEffect(() => {
     const storedUpvotedIssues = JSON.parse(localStorage.getItem('upvotedIssues')) || [];
     setUpvotedIssues(new Set(storedUpvotedIssues));
@@ -16,8 +15,8 @@ export default function Trending() {
   useEffect(() => {
     const fetchTrendingIssues = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/issues/get'); // Adjust the endpoint as necessary
-        setTrendingIssues(response.data.issues); // Assuming the response contains an 'issues' array
+        const response = await axios.get('http://localhost:5000/api/issues/get');
+        setTrendingIssues(response.data.issues);
       } catch (error) {
         console.error('Error fetching trending issues:', error);
       }
@@ -30,22 +29,20 @@ export default function Trending() {
     try {
       const response = await axios.put(
         `http://localhost:5000/api/issues/trending/${issueId}/upvote`,
-        { upvote: true }, // Send upvote action in the request body
+        { upvote: true },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`, // Include token for authentication
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         }
       );
 
-      // Update the local state to reflect the new vote count
       setTrendingIssues((prevIssues) =>
         prevIssues.map((issue) =>
           issue._id === issueId ? { ...issue, votes: response.data.votes } : issue
         )
       );
 
-      // Add the issue to the upvotedIssues set and save to local storage
       setUpvotedIssues((prev) => {
         const updated = new Set(prev);
         updated.add(issueId);
@@ -72,26 +69,28 @@ export default function Trending() {
           <li>
             <Link to="/issue">Report Issues</Link>
           </li>
-          <li>
-            <Link to="/trending">Trending Issues</Link>
-          </li>
-          <li>
-            <Link to="/login">Login</Link>
-          </li>
-          <li><a href="#contact">Contact</a></li>
         </ul>
       </nav>
 
-      {/* Trending Issues Section */}
       <section className="trending-section" id="trending">
         <h2>Trending Issues</h2>
         <div className="issue-card-container">
           {trendingIssues
-            .sort((a, b) => b.votes - a.votes) // Sort issues by votes in descending order
-            .map((issue) => (
+            .sort((a, b) => b.votes - a.votes)
+            .map((issue, index) => (
               <div className="issue-card" key={issue._id}>
-                <h3>{issue.title}</h3>
+                {index === 0 && (
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/512/12225/12225836.png"
+                    alt="Trending"
+                    className="trending-icon"
+                  />
+                )}
+                <h3  style={{ color: 'black' }}>
+                  #{index + 1} {issue.title}
+                </h3>
                 <p>Reported by {issue.votes} citizens</p>
+                <p>{issue.description}</p>
                 {upvotedIssues.has(issue._id) ? (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                     <span style={{ color: 'green', fontSize: '1.5em' }}>✓</span>

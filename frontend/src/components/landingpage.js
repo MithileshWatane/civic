@@ -74,6 +74,13 @@ export default function App() {
 
 
   const [trendingIssues, setTrendingIssues] = useState([]);
+  const [upvotedIssues, setUpvotedIssues] = useState(new Set());
+
+  // Load upvoted issues from local storage
+  useEffect(() => {
+    const storedUpvotedIssues = JSON.parse(localStorage.getItem('upvotedIssues')) || [];
+    setUpvotedIssues(new Set(storedUpvotedIssues));
+  }, []);
 
   useEffect(() => {
     const fetchTrendingIssues = async () => {
@@ -90,15 +97,36 @@ export default function App() {
 
   const handleUpvote = async (issueId) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/issues/trending/${issueId}/upvote`);
+      const response = await axios.put(
+        `http://localhost:5000/api/issues/trending/${issueId}/upvote`,
+        { upvote: true }, // Send upvote action in the request body
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`, // Include token for authentication
+          },
+        }
+      );
+
       // Update the local state to reflect the new vote count
       setTrendingIssues((prevIssues) =>
         prevIssues.map((issue) =>
           issue._id === issueId ? { ...issue, votes: response.data.votes } : issue
         )
       );
+
+      // Add the issue to the upvotedIssues set and save to local storage
+      setUpvotedIssues((prev) => {
+        const updated = new Set(prev);
+        updated.add(issueId);
+        localStorage.setItem('upvotedIssues', JSON.stringify([...updated]));
+        return updated;
+      });
     } catch (error) {
-      console.error('Error upvoting issue:', error);
+      if (error.response && error.response.status === 400) {
+        alert('You have already upvoted this issue.');
+      } else {
+        console.error('Error upvoting issue:', error);
+      }
     }
   };
 
@@ -174,10 +202,10 @@ export default function App() {
 
       <header className="hero">
         <div className="overlay" />
-        <div className="hero-content">
+        <div className="hero-content" >
           <h1>'Empower Your Voice'</h1>
           <p>Report issues, track progress, and improve your community.</p>
-          <Link to="/issue" className="btn hero-btn">
+          <Link to="/issue" className="btn hero-btn"  >
             Report Now
           </Link>
         </div>
@@ -194,17 +222,39 @@ export default function App() {
           <section className="trending-section" id="trending">
         <h2>Trending Issues</h2>
         <div className="issue-card-container">
-{trendingIssues
-  .sort((a, b) => b.votes - a.votes) // Sort issues by votes in descending order
-  .map((issue) => (
-            <div className="issue-card" key={issue._id}>
-              <h3>{issue.title}</h3>
-              <p>Reported by {issue.votes} citizens</p>
-              <button className="cta-button" onClick={() => handleUpvote(issue._id)}>Upvote</button>
-            </div>
-          ))}
+          {trendingIssues
+            .sort((a, b) => b.votes - a.votes)
+            .map((issue, index) => (
+              <div className="issue-card" key={issue._id}>
+                {index === 0 && (
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/512/12225/12225836.png"
+                    alt="Trending"
+                    className="trending-icon"
+                  />
+                )}
+                <h3  style={{ color: 'black' }}>
+                  #{index + 1} {issue.title}
+                </h3>
+                <p>Reported by {issue.votes} citizens</p>
+                <p>{issue.description}</p>
+                {upvotedIssues.has(issue._id) ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <span style={{ color: 'green', fontSize: '1.5em' }}>✓</span>
+                    <span style={{ fontWeight: 'bold', color: 'green' }}>Upvoted</span>
+                  </div>
+                ) : (
+                  <button
+                    className="cta-button"
+                    onClick={() => handleUpvote(issue._id)}
+                  >
+                    Upvote
+                  </button>
+                )}
+              </div>
+            ))}
         </div>
-        </section>
+      </section>
       </>
       <div className="features">
         <h1>Features</h1>
@@ -341,7 +391,7 @@ export default function App() {
               <h1>'Empower Your Voice'</h1>
               <p>Report issues, track progress, and improve your community.</p>
               <div>
-              <Link to="/issue" className="btn hero-btn" >
+              <Link to="/" className="btn hero-btn" onClick={handleReportIssueClick1} >
                 Report Now
               </Link>
               </div>

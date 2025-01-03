@@ -92,21 +92,24 @@
 }
 
 /* Loading & Error State */
-.loading,
+.loading {
+  text-align: center;
+  font-size: 18px;
+  color: #f39c12;
+  background-color: #fff3cd; /* Light background for visibility */
+  padding: 15px;
+  border-radius: 5px;
+}
+
 .error {
   text-align: center;
   font-size: 18px;
   color: #e74c3c;
+  background-color: #f8d7da; /* Light red background for visibility */
+  padding: 15px;
+  border-radius: 5px;
 }
 
-.loading {
-  font-style: italic;
-  color: #f39c12;
-}
-
-.error {
-  font-weight: bold;
-}
 
 /* Responsiveness */
 @media (max-width: 768px) {

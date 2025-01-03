@@ -1,8 +1,8 @@
 /* Global Styling */
 body {
   font-family: 'Arial', sans-serif;
-  background-color: #f0f8ff; /* Light blue background */
-  color: #333;
+  background-color: #ffffff; /* Light blue background */
+  color: #111010;
   margin: 0;
   padding: 0;
   transition: background-color 0.3s ease;
@@ -10,13 +10,13 @@ body {
 
 /* Container for the Issue Form */
 .issue-form {
-  background-color: #ffffff;
+  /* background-color: #ffffff; */
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); */
   width: 100%;
   max-width: 600px;
-  margin: 20px auto;
+  margin: 90px auto;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -35,6 +35,7 @@ body {
 .issue-form form {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .issue-form form div {

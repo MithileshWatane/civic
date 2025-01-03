@@ -120,9 +120,7 @@ export default function Login() {
                   Login
                 </button>
                 {errorMessage && <p className="error-message">{errorMessage}</p>}
-                <div className="login-links">
-                  <Link to="/forgot-password">Forgot Password?</Link>
-                </div>
+               
               </form>
             )}
           </div>

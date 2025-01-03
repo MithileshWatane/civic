@@ -98,8 +98,6 @@ export default function Dashboard() {
         <div className="logo">CivicConnect</div>
         <ul>
           <li><Link to="/">Home</Link></li>
-          <li><Link to="/issue">Report Issues</Link></li>
-          <li><Link to="/login">Login</Link></li>
         </ul>
       </nav>
       <section className="dashboard">

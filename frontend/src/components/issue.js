@@ -80,8 +80,6 @@ const CivicIssueForm = () => {
         <div className="logo">CivicConnect</div>
         <ul>
           <li><Link to="/">Home</Link></li>
-          <li><Link to="/dashboard">Dashboard</Link></li>
-          <li><Link to="/login">Login</Link></li>
         </ul>
       </nav>
       <div className="issue-form">
@@ -139,7 +137,13 @@ const CivicIssueForm = () => {
           </div>
           <button type="submit">Submit Issue</button>
         </form>
+
+        
       </div>
+
+      <footer>
+        <p>© 2024 CivicConnect. All Rights Reserved.</p>
+      </footer>
     </>
   );
 };

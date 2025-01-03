@@ -1,30 +1,33 @@
-/* Navbar Styles */
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
-    background-color: rgba(0, 0, 0, 0.6);
-    position: fixed;
-    width: 100%;
-    z-index: 100;
-  }
-  
-  .navbar ul {
-    display: flex;
-    list-style: none;
-  }
-  
-  .navbar li {
-    margin: 0 15px;
-  }
-  
-  .navbar a {
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
-  }
-  
-  .navbar a:hover {
-    text-decoration: underline;
-  }
-  
+  background-color: #007bff; /* Blue color */
+  color: #fff;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar .logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.nav-links {
+  list-style: none;
+  padding: 0;
+  display: flex;
+}
+
+.nav-links li {
+  margin-left: 20px;
+}
+
+.nav-links a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: #f0f0f0; /* Lighter color on hover */
+}

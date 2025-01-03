@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './styles/profile.css'; // Assuming you have a separate CSS file for styling
+import { Link } from 'react-router-dom';
+
+
 
 const Profile = () => {
   const [user, setUser] = useState();
@@ -35,15 +38,23 @@ const Profile = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="loading">Loading...</div>;
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <div className="error">{error}</div>;
   }
 
   return (
+
     <div className="profile-page">
+       <nav className="navbar">
+              <div className="logo">CivicConnect</div>
+              <ul>
+                <li><Link to="/">Home</Link></li>
+            
+              </ul>
+            </nav>
       <h1>Profile</h1>
       
       <div className="profile-card">
@@ -74,6 +85,9 @@ const Profile = () => {
           </ul>
         )}
       </div>
+      <footer>
+        <p>© 2024 CivicConnect. All Rights Reserved.</p>
+      </footer>
     </div>
   );
 };
