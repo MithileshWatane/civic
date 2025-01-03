@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import './styles/trending.css';
 import axios from 'axios';
 import './styles/index.css';
+import { jwtDecode } from 'jwt-decode';  // Corrected import
+
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -72,21 +74,28 @@ export default function App() {
     }
   };
 
-
   const [trendingIssues, setTrendingIssues] = useState([]);
+  const [userId, setUserId] = useState(null); // Store the decoded user ID
   const [upvotedIssues, setUpvotedIssues] = useState(new Set());
 
-  // Load upvoted issues from local storage
   useEffect(() => {
-    const storedUpvotedIssues = JSON.parse(localStorage.getItem('upvotedIssues')) || [];
-    setUpvotedIssues(new Set(storedUpvotedIssues));
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Decode token or retrieve userId based on your auth flow
+      const decodedToken = jwtDecode(token);
+      setUserId(decodedToken.id); // Assuming userId is in the decoded token
+    }
   }, []);
 
   useEffect(() => {
     const fetchTrendingIssues = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/issues/get'); // Adjust the endpoint as necessary
-        setTrendingIssues(response.data.issues); // Assuming the response contains an 'issues' array
+        const response = await axios.get('http://localhost:5000/api/issues/get', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`, // Send the token for authentication
+          },
+        });
+        setTrendingIssues(response.data.issues);
       } catch (error) {
         console.error('Error fetching trending issues:', error);
       }
@@ -99,37 +108,31 @@ export default function App() {
     try {
       const response = await axios.put(
         `http://localhost:5000/api/issues/trending/${issueId}/upvote`,
-        { upvote: true }, // Send upvote action in the request body
+        { upvote: true },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`, // Include token for authentication
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         }
       );
 
-      // Update the local state to reflect the new vote count
+      // Update the state to reflect the new votes and upvotedBy data
       setTrendingIssues((prevIssues) =>
         prevIssues.map((issue) =>
-          issue._id === issueId ? { ...issue, votes: response.data.votes } : issue
+          issue._id === issueId
+            ? {
+                ...issue,
+                votes: response.data.votes,
+                upvotedBy: [...issue.upvotedBy, userId],  // Add userId to upvotedBy array
+              }
+            : issue
         )
       );
-
-      // Add the issue to the upvotedIssues set and save to local storage
-      setUpvotedIssues((prev) => {
-        const updated = new Set(prev);
-        updated.add(issueId);
-        localStorage.setItem('upvotedIssues', JSON.stringify([...updated]));
-        return updated;
-      });
+      
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        alert('You have already upvoted this issue.');
-      } else {
-        console.error('Error upvoting issue:', error);
-      }
+      console.error('Error upvoting issue:', error);
     }
   };
-
   return (
 
     <>
@@ -222,14 +225,16 @@ export default function App() {
         </div>
       </header>
       )}
-      
-
     <div>
+
+
+      
 
 
       
       {/* Trending  */}
           <>
+          {role === 'citizen' && (
           <section className="trending-section" id="trending">
         <h2>Trending Issues</h2>
         <div className="issue-card-container">
@@ -244,17 +249,19 @@ export default function App() {
                     className="trending-icon"
                   />
                 )}
-                <h3  style={{ color: 'black' }}>
+                <h3 style={{ color: 'black' }}>
                   #{index + 1} {issue.title}
                 </h3>
                 <p>Reported by {issue.votes} citizens</p>
                 <p>{issue.description}</p>
-                {upvotedIssues.has(issue._id) ? (
+                {issue.upvotedBy.includes(userId) ? (
+                  // Show this if the user has already upvoted
                   <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                     <span style={{ color: 'green', fontSize: '1.5em' }}>✓</span>
                     <span style={{ fontWeight: 'bold', color: 'green' }}>Upvoted</span>
                   </div>
                 ) : (
+                  // Show this if the user has not upvoted
                   <button
                     className="cta-button"
                     onClick={() => handleUpvote(issue._id)}
@@ -266,6 +273,36 @@ export default function App() {
             ))}
         </div>
       </section>
+          )}
+       {role === 'government' && (
+          <section className="trending-section" id="trending">
+        <h2>Trending Issues</h2>
+        <div className="issue-card-container">
+          {trendingIssues
+            .sort((a, b) => b.votes - a.votes)
+            .map((issue, index) => (
+              <div className="issue-card" key={issue._id}>
+                {index === 0 && (
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/512/12225/12225836.png"
+                    alt="Trending"
+                    className="trending-icon"
+                  />
+                )}
+                <h3 style={{ color: 'black' }}>
+                  #{index + 1} {issue.title}
+                </h3>
+                <p>Reported by {issue.votes} citizens</p>
+                <p>{issue.description}</p>
+                <Link to="/dashboard" className="cta-button">
+               Know More
+              </Link>              
+              </div>
+            ))}
+        </div>
+      </section>
+          )}
+
       </>
       <div className="features">
         <h1>Features</h1>

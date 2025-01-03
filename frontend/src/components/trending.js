@@ -2,20 +2,30 @@ import React, { useEffect, useState } from 'react';
 import './styles/trending.css';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';  // Corrected import
 
 export default function Trending() {
   const [trendingIssues, setTrendingIssues] = useState([]);
+  const [userId, setUserId] = useState(null); // Store the decoded user ID
   const [upvotedIssues, setUpvotedIssues] = useState(new Set());
 
   useEffect(() => {
-    const storedUpvotedIssues = JSON.parse(localStorage.getItem('upvotedIssues')) || [];
-    setUpvotedIssues(new Set(storedUpvotedIssues));
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Decode token or retrieve userId based on your auth flow
+      const decodedToken = jwtDecode(token);
+      setUserId(decodedToken.id); // Assuming userId is in the decoded token
+    }
   }, []);
 
   useEffect(() => {
     const fetchTrendingIssues = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/issues/get');
+        const response = await axios.get('http://localhost:5000/api/issues/get', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`, // Send the token for authentication
+          },
+        });
         setTrendingIssues(response.data.issues);
       } catch (error) {
         console.error('Error fetching trending issues:', error);
@@ -37,24 +47,21 @@ export default function Trending() {
         }
       );
 
+      // Update the state to reflect the new votes and upvotedBy data
       setTrendingIssues((prevIssues) =>
         prevIssues.map((issue) =>
-          issue._id === issueId ? { ...issue, votes: response.data.votes } : issue
+          issue._id === issueId
+            ? {
+                ...issue,
+                votes: response.data.votes,
+                upvotedBy: [...issue.upvotedBy, userId],  // Add userId to upvotedBy array
+              }
+            : issue
         )
       );
-
-      setUpvotedIssues((prev) => {
-        const updated = new Set(prev);
-        updated.add(issueId);
-        localStorage.setItem('upvotedIssues', JSON.stringify([...updated]));
-        return updated;
-      });
+      
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        alert('You have already upvoted this issue.');
-      } else {
-        console.error('Error upvoting issue:', error);
-      }
+      console.error('Error upvoting issue:', error);
     }
   };
 
@@ -70,11 +77,8 @@ export default function Trending() {
             <Link to="/issue">Report Issues</Link>
           </li>
           <li>
-                                    <Link to="/community">Community</Link>
-                                  </li>
-                    <li >
-                                    <Link to="/">Report Issues</Link>
-                                  </li>
+            <Link to="/community">Community</Link>
+          </li>
         </ul>
       </nav>
 
@@ -92,17 +96,19 @@ export default function Trending() {
                     className="trending-icon"
                   />
                 )}
-                <h3  style={{ color: 'black' }}>
+                <h3 style={{ color: 'black' }}>
                   #{index + 1} {issue.title}
                 </h3>
                 <p>Reported by {issue.votes} citizens</p>
                 <p>{issue.description}</p>
-                {upvotedIssues.has(issue._id) ? (
+                {issue.upvotedBy.includes(userId) ? (
+                  // Show this if the user has already upvoted
                   <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                     <span style={{ color: 'green', fontSize: '1.5em' }}>✓</span>
                     <span style={{ fontWeight: 'bold', color: 'green' }}>Upvoted</span>
                   </div>
                 ) : (
+                  // Show this if the user has not upvoted
                   <button
                     className="cta-button"
                     onClick={() => handleUpvote(issue._id)}
