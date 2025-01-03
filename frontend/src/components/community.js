@@ -56,7 +56,11 @@ export default function CommunityUpdated() {
         <div className="logo">CivicConnect</div>
         <ul>
           <li><Link to="/">Home</Link></li>
-      
+          <li>
+                          <Link to="/issue">Report Issues</Link>
+                        </li>
+                                  <li><Link to="/trending">Trending Issues</Link></li>
+                        
         </ul>
       </nav>
 
@@ -71,7 +75,7 @@ export default function CommunityUpdated() {
 
       <section className="crowdfunding-section">
         <h2>Support Local Initiatives</h2>
-        <p>Contribute to crowdfunding campaigns that aim to enhance our community. Together, we can achieve great things!</p>
+        <p>Contribute to social campaigns that aim to enhance our community. Together, we can achieve great things!</p>
         <button onClick={() => setShowForm(!showForm)} className="btn">
           {showForm ? 'Cancel' : 'New Project'}
         </button>
@@ -86,14 +90,14 @@ export default function CommunityUpdated() {
               required
               placeholder="Enter project name"
             />
-            <label htmlFor="goalAmount">Volunteer Required ($):</label>
+            <label htmlFor="goalAmount">Volunteers Required :</label>
             <input
               type="number"
               id="goalAmount"
               value={goalAmount}
               onChange={(e) => setGoalAmount(e.target.value)}
               required
-              placeholder="Enter goal amount"
+              placeholder="Number of Volunteers Required"
             />
             <label htmlFor="description">Project Description:</label>
             <textarea
@@ -115,7 +119,7 @@ export default function CommunityUpdated() {
           {projects.map((project) => (
             <div className="project-card" key={project._id}>
               <h3>{project.name}</h3>
-              <p>Volunteer Required: {project.goalAmount} | Active participate: {project.funding}</p>
+              <p>Volunteers Required: {project.goalAmount} | Active participants: {project.funding}</p>
               <div className="progress-bar">
                 <div
                   className="progress"
@@ -130,17 +134,16 @@ export default function CommunityUpdated() {
               {project.funding >= project.goalAmount ? (
                 <p className="goal-completed">Goal is Completed</p>
               ) : volunteeredProjects.has(project._id) ? (
-                <p className="already-volunteered">You have volunteered</p>
+                <p className="already-volunteered">You have participated</p>
               ) : (
                 <button onClick={() => handleContribution(project._id)} className="btn">
-                  Volunteer
+                   Participate
                 </button>
               )}
             </div>
           ))}
         </div>
       </section>
-
       
       <footer>
         <p>© 2024 CivicConnect. All Rights Reserved.</p>

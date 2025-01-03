@@ -195,3 +195,24 @@ exports.getAllIssues = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+exports.deleteIssue = async (req, res) => {
+  const { id } = req.params; // Get the issue ID from the URL
+
+  try {
+    // Ensure req.user is defined
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: 'Unauthorized: User not authenticated' });
+    }
+
+    // Find and delete the issue
+    const deletedIssue = await Issue.findByIdAndDelete(id);
+
+    if (!deletedIssue) {
+      return res.status(404).json({ message: 'Issue not found' });
+    }
+
+    res.status(200).json({ message: 'Issue deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting issue:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }};

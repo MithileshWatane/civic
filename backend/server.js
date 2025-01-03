@@ -34,6 +34,8 @@ app.use('/api/issues', issueRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/community', communityRoutes); // Use community routes
 
+
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './styles/profile.css'; // Assuming you have a separate CSS file for styling
+import './styles/profile.css';
 import { Link } from 'react-router-dom';
 
 const Profile = () => {
@@ -21,7 +21,7 @@ const Profile = () => {
 
           const issuesResponse = await axios.get('http://localhost:5000/api/issues/user', {
             headers: {
-              Authorization: `Bearer ${token}`, // Assuming you're storing the token in localStorage
+              Authorization: `Bearer ${token}`,
             },
           });
           setIssues(issuesResponse.data.issues);
@@ -38,6 +38,18 @@ const Profile = () => {
     fetchUserData();
   }, []);
 
+  const deleteIssue = async (id) => {
+    const token = localStorage.getItem('token');
+    try {
+      await axios.delete(`http://localhost:5000/api/issues/delete/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setIssues(issues.filter(issue => issue._id !== id)); // Update state to remove deleted issue
+    } catch (err) {
+      setError('Error deleting issue');
+    }
+  };
+
   if (loading) {
     return <div className="loading">Loading...</div>;
   }
@@ -52,28 +64,28 @@ const Profile = () => {
         <div className="logo">CivicConnect</div>
         <ul>
           <li><Link to="/">Home</Link></li>
+          <li><Link to="/issue">Report Issues</Link></li>
+          <li><Link to="/trending">Trending Issues</Link></li>
         </ul>
       </nav>
 
       <h1>Profile</h1>
 
       <div className="main-content">
-        {/* Sidebar with user info */}
         <div className="sidebar">
           <div className="user-info">
             {user && (
               <>
                 <h1>Profile</h1>
-                <h3 color='blue'>Name: </h3><br></br>
-                <h2>{user.name}</h2><br></br>
-                <h3>Email: </h3><br></br>
+                <h3 color='blue'>Name: </h3><br />
+                <h2>{user.name}</h2><br />
+                <h3>Email: </h3><br />
                 <h2>{user.email}</h2>
               </>
             )}
           </div>
         </div>
 
-        {/* Issues section */}
         <div className="issues">
           <h3>Reported Issues</h3>
           {issues.length === 0 ? (
@@ -86,7 +98,8 @@ const Profile = () => {
                   Description: {issue.description} <br />
                   Location: {issue.location} <br />
                   Status: {issue.status} <br />
-                  Reported To: {issue.governmentAuthority.name} ({issue.governmentAuthority.email})
+                  Reported To: {issue.governmentAuthority.name} ({issue.governmentAuthority.email}) <br /><br></br>
+                  <button onClick={() => deleteIssue(issue._id)}>Delete</button> {/* Delete button */}
                 </li>
               ))}
             </ul>

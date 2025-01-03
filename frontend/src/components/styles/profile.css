@@ -154,3 +154,20 @@ html, body {
     width: 100%;
   }
 }
+
+
+.issues button {
+  background-color: #ff4d4d; /* Red background for delete action */
+  color: white; /* White text */
+  border: none; /* Remove border */
+  padding: 10px 15px; /* Padding for better click area */
+  border-radius: 5px; /* Rounded corners */
+  font-size: 14px; /* Font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+}
+
+.issues button:hover {
+  background-color: #e60000; /* Darker red on hover */
+  transform: scale(1.05); /* Slight zoom effect */
+}

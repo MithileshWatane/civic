@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './styles/complaints.css';
+import { navigate } from 'react-router-dom';
 
 const CivicIssueForm = () => {
   const [formData, setFormData] = useState({
@@ -80,6 +81,12 @@ const CivicIssueForm = () => {
         <div className="logo">CivicConnect</div>
         <ul>
           <li><Link to="/">Home</Link></li>
+          <li><Link to="/trending">Trending Issues</Link></li>
+          <li>
+                          <Link to="/community">Community</Link>
+                        </li>
+          
+
         </ul>
       </nav>
       <div className="issue-form">

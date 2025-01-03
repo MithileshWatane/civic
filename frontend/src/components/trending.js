@@ -69,6 +69,12 @@ export default function Trending() {
           <li>
             <Link to="/issue">Report Issues</Link>
           </li>
+          <li>
+                                    <Link to="/community">Community</Link>
+                                  </li>
+                    <li >
+                                    <Link to="/">Report Issues</Link>
+                                  </li>
         </ul>
       </nav>
 
