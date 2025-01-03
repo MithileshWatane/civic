@@ -23,16 +23,16 @@ exports.getProjects = async (req, res) => {
   }
 };
 
-// Upvote a project
-exports.upvoteProject = async (req, res) => {
-  const { projectId } = req.params;
-  try {
-    const project = await Project.findByIdAndUpdate(projectId, { $inc: { upvotes: 1 } }, { new: true });
-    res.status(200).json(project);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
+// // Upvote a project
+// exports.upvoteProject = async (req, res) => {
+//   const { projectId } = req.params;
+//   try {
+//     const project = await Project.findByIdAndUpdate(projectId, { $inc: { upvotes: 1 } }, { new: true });
+//     res.status(200).json(project);
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// };
 
 // Submit a new message
 exports.submitMessage = async (req, res) => {
@@ -53,5 +53,28 @@ exports.getMessages = async (req, res) => {
     res.status(200).json(messages);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+
+// Contribution handler
+exports.contributeToProject = async (req, res) => {
+  const { projectId } = req.params;
+  const { amount } = req.body;
+
+  try {
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    // Update the project's current funding
+    project.funding += parseFloat(amount);
+    await project.save();
+
+    res.status(200).json({ message: 'Contribution successful', project });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
