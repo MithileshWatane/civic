@@ -8,15 +8,14 @@ body {
 .navbar {
   position: sticky;
   top: 0;
-  z-index: 1000; /* Keep it above other elements */
+  z-index: 1000;
   transition: opacity 0.5s ease, background-color 0.5s ease;
 }
 
 .scrolled .navbar {
-  opacity: 0.7; /* Faded effect */
-  background-color: rgba(0, 51, 102, 0.9); /* Slightly transparent background */
+  opacity: 0.7;
+  background-color: rgba(0, 51, 102, 0.9);
 }
-
 
 .navbar .logo {
   font-size: 1.5rem;
@@ -29,12 +28,10 @@ body {
   margin: 0;
   padding: 0;
   align-items: center;
-
 }
 
 .navbar li {
   margin: 0 1rem;
-  
 }
 
 .navbar a {
@@ -43,22 +40,22 @@ body {
 }
 
 .logout-btn {
-  background-color: #007bff; /* Blue background color */
-  color: white; /* White text color */
-  border: none; /* Remove default border */
-  border-radius: 5px; /* Rounded corners */
-  padding: 10px 20px; /* Add padding */
-  font-size: 16px; /* Font size */
-  cursor: pointer; /* Pointer cursor on hover */
-  transition: background-color 0.3s ease; /* Smooth transition on hover */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .logout-btn:hover {
-  background-color: #0056b3; /* Darker blue on hover */
+  background-color: #0056b3;
 }
 
 .logout-btn:active {
-  background-color: #003f7f; /* Even darker blue on click */
+  background-color: #003f7f;
 }
 
 .hero {
@@ -79,7 +76,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* Darker overlay for better content visibility */
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 0;
 }
 
@@ -88,7 +85,6 @@ body {
   z-index: 1;
   color: #ffffff;
 }
-
 
 .hero h1 {
   font-size: 2.5rem;
@@ -101,8 +97,8 @@ body {
 }
 
 .btn {
-  background-color: #ffffff; /* White */
-  color: #006aff; /* Dark blue */
+  background-color: #ffffff;
+  color: #006aff;
   padding: 0.5rem 1.5rem;
   border: none;
   border-radius: 5px;
@@ -111,20 +107,23 @@ body {
 }
 
 .btn:hover {
-  background-color: #cce7ff; /* Light blue */
+  background-color: #cce7ff;
   transform: translateY(-3px);
 }
+
 .features {
   justify-content: center;
   align-items: center;
   padding: 10px;
-  gap: 20px; /* Space between cards if there are multiple */
+  gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
 }
-.features h1{
+
+.features h1 {
   justify-content: center;
   align-items: center;
   padding: 10px;
-  gap: 20px; /* Space between cards if there are multiple */
   margin-left: 150px;
   margin-top: 50px;
 }
@@ -133,24 +132,24 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #f9f9f9; /* Background color for the card */
+  background-color: #f9f9f9;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  width: 75%;  
-  height: 400px;  
+  width: 75%;
+  height: 400px;
   margin: 20px auto;
+  flex-wrap: wrap;
 }
 
 .card-image {
   background-size: cover;
   background-position: center;
   width: 40%;
-  height: 70%; /* Set a fixed height */
-  border-radius: 10px 0 0 10px; /* Rounded corners for the left side */
+  height: 70%;
+  border-radius: 10px 0 0 10px;
   margin-left: 20px;
   margin-right: 30px;
-
 }
 
 .card-content {
@@ -165,13 +164,13 @@ body {
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 30px;
-  color: #333; /* Main text color */
+  color: #333;
 }
 
 .card-content p {
   font-size: 1rem;
   margin-bottom: 20px;
-  color: #555; /* Subtext color */
+  color: #555;
 }
 
 .card-content .btn {
@@ -180,23 +179,21 @@ body {
   font-size: 1rem;
   font-weight: 600;
   color: #fff;
-  background-color: #3970d0; /* Button background color */
+  background-color: #3970d0;
   border: none;
   border-radius: 5px;
-  text-decoration: none; /* Remove underline */
+  text-decoration: none;
   text-align: center;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .card-content .btn:hover {
-  background-color: #5a1283; /* Darker hover effect */
+  background-color: #5a1283;
 }
 
-
-
 footer {
-  background-color: #446ca5bc; /* Dark blue */
+  background-color: #446ca5bc;
   color: #ffffff;
   text-align: center;
   padding: 1rem;
@@ -222,7 +219,6 @@ footer {
   }
 }
 
-/* Background images for specific cards */
 .card:nth-child(1) .card-image {
   background-image: url('issue\ reporting.jpg');
 }
@@ -247,3 +243,86 @@ footer {
   background-image: url('Government.jpg');
 }
 
+/* Media Queries for responsiveness */
+@media (max-width: 1200px) {
+  .navbar ul {
+    font-size: 0.9rem;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .features h1 {
+    margin-left: 50px;
+  }
+
+  .card {
+    width: 90%;
+    height: auto;
+  }
+
+  .card-image {
+    width: 100%;
+    height: 200px;
+    margin: 10px 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar ul {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .navbar li {
+    margin: 10px 0;
+  }
+
+  .hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .features h1 {
+    margin-left: 20px;
+  }
+
+  .card {
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+  }
+
+  .card-image {
+    width: 100%;
+    height: 200px;
+  }
+
+  .card-content {
+    width: 100%;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero h1 {
+    font-size: 1.5rem;
+  }
+
+  .btn {
+    padding: 0.4rem 1rem;
+  }
+
+  .card-content h3 {
+    font-size: 1.2rem;
+  }
+
+  .card-content p {
+    font-size: 0.9rem;
+  }
+
+  footer {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+}

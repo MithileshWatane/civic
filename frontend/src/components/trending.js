@@ -68,7 +68,9 @@ export default function Trending() {
   return (
     <>
       <nav className="navbar">
-        <div className="logo">CivicConnect</div>
+         <Link to="/" className="logo" >
+                  Civic<span style={{ color: 'blue' }}>Connect</span>
+                  </Link>
         <ul>
           <li>
             <Link to="/">Home</Link>

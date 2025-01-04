@@ -61,9 +61,9 @@ export default function Login() {
   return (
     <>
       <nav className="navbar">
-        <div className="logo">
-          <a href="#">CivicConnect</a>
-        </div>
+ <Link to="/" className="logo" >
+          Civic<span style={{ color: 'blue' }}>Connect</span>
+          </Link>
         <ul className="nav-links">
           <li>
             <Link to="/">Home</Link>

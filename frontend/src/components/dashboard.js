@@ -126,7 +126,9 @@ export default function Dashboard() {
   return (
     <>
       <nav className="navbar">
-        <div className="logo">CivicConnect</div>
+         <Link to="/" className="logo" >
+                  Civic<span style={{ color: 'blue' }}>Connect</span>
+                  </Link>
         <ul>
           <li><Link to="/">Home</Link></li>
         </ul>
@@ -173,7 +175,7 @@ export default function Dashboard() {
     {/* Doughnut Chart */}
     <div className="pie-chart">
       <h3>Issue Distribution</h3>
-      <ResponsiveContainer width="100%" height={250}>
+      <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
             data={chartData}

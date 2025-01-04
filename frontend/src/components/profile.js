@@ -7,6 +7,7 @@ import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 const Profile = () => {
   const [user, setUser] = useState(null);
   const [issues, setIssues] = useState([]);
+  const [projects, setProjects] = useState([]); // Added state for projects
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -15,17 +16,34 @@ const Profile = () => {
       try {
         const token = localStorage.getItem('token');
         if (token) {
+          // Fetch user details
           const response = await axios.get('http://localhost:5000/api/users/me', {
             headers: { Authorization: `Bearer ${token}` },
           });
           setUser(response.data.user);
 
+          // Fetch user's reported issues
           const issuesResponse = await axios.get('http://localhost:5000/api/issues/user', {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           });
           setIssues(issuesResponse.data.issues);
+
+          // Fetch all projects and filter by user ID (createdBy field)
+          const projectsResponse = await axios.get('http://localhost:5000/api/community/projects', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          
+          const userId = response.data.user._id; // Extract userId from user response
+
+          // Filter projects created by this user
+          const createdProjects = projectsResponse.data.filter(
+            (project) => project.createdBy === userId
+          );
+          setProjects(createdProjects);
         } else {
           setError('No token found');
         }
@@ -77,22 +95,20 @@ const Profile = () => {
     { name: 'Resolved', value: resolved },
   ];
 
-  console.log('Pie Chart Data:', pieChartData);  // Debugging log to check the data
-
   const COLORS = ['#ffbb33', '#33b5e5', '#00C49F']; // Colors for chart segments
 
   return (
     <div className="profile-page">
       <nav className="navbar">
-        <div className="logo">CivicConnect</div>
+         <Link to="/" className="logo" >
+                  Civic<span style={{ color: 'blue' }}>Connect</span>
+                  </Link>
         <ul>
           <li><Link to="/">Home</Link></li>
           <li><Link to="/issue">Report Issues</Link></li>
           <li><Link to="/trending">Trending Issues</Link></li>
         </ul>
       </nav>
-
-
 
       <div className="main-content">
         <div className="sidebar">
@@ -101,7 +117,8 @@ const Profile = () => {
               <>
                 <h1>Profile</h1>
                 <h3>Name:</h3>
-                <h2>{user.name}</h2><br></br>
+                <h2>{user.name}</h2>
+                <br />
                 <h3>Email:</h3>
                 <h2>{user.email}</h2>
                 <div className="issue-stats">
@@ -110,31 +127,32 @@ const Profile = () => {
                   <p>Reported: {reported}</p>
                   <p>In Progress: {inProgress}</p>
                   <p>Resolved: {resolved}</p>
-                
-                <div className="pie-chart-profile">
-                  <h4>Visualization:</h4>
-                  {total > 0 ? (
-                    <PieChart width={200} height={300}>
-                      <Pie
-                        data={pieChartData}
-                        cx="50%"
-                        cy="50%"
-                        label
-                        outerRadius={100}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {pieChartData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                      <Legend />
-                    </PieChart>
-                  ) : (
-                    <p>No issues to display on the chart.</p>
-                  )}
-                </div></div>
+
+                  <div className="pie-chart-profile">
+                    <h4>Visualization:</h4>
+                    {total > 0 ? (
+                      <PieChart width={200} height={300}>
+                        <Pie
+                          data={pieChartData}
+                          cx="50%"
+                          cy="50%"
+                          label
+                          outerRadius={100}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {pieChartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                        <Legend />
+                      </PieChart>
+                    ) : (
+                      <p>No issues to display on the chart.</p>
+                    )}
+                  </div>
+                </div>
               </>
             )}
           </div>
@@ -158,7 +176,27 @@ const Profile = () => {
               ))}
             </ul>
           )}
+
+<div className="projects">
+          <h3>Projects Created by You</h3>
+          {projects.length === 0 ? (
+            <p>No projects created by you.</p>
+          ) : (
+            <ul>
+              {projects.map((project) => (
+                <li key={project._id}>
+                  <strong>{project.name}</strong> <br />
+                  Description: {project.description} <br />
+                  Volunteers Required: {project.goalAmount} <br />
+                  Active participants: {project.funding} <br />
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
+        </div>
+
+        
       </div>
 
       <footer>

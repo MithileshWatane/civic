@@ -5,6 +5,9 @@ const projectSchema = new mongoose.Schema({
   goalAmount: { type: Number, required: true },
   description: { type: String, required: true },
   funding: { type: Number, default: 0 },
+  contributedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Array to store user IDs
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // User who created the project
+
   createdAt: { type: Date, default: Date.now }
 });
 

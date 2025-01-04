@@ -138,7 +138,7 @@ export default function App() {
     {isLoggedIn ? (
           <div className="main">
       <nav className="navbar">
-        <div className="logo">
+        <div className="logo" onClick={() => handleNavigation('/')}>
           Civic<span style={{ color: 'blue' }}>Connect</span>
         </div>
         <ul>

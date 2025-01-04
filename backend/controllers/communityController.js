@@ -1,10 +1,17 @@
 const Project = require('../models/Project');
 
-// Submit a new project
 exports.submitProject = async (req, res) => {
   const { name, goalAmount, description } = req.body;
+  const userId = req.user.id; // Assumes `req.user` is set by authentication middleware
+
   try {
-    const newProject = new Project({ name, goalAmount, description });
+    const newProject = new Project({
+      name,
+      goalAmount,
+      description,
+      createdBy: userId, // Add the creator's ID
+    });
+
     await newProject.save();
     res.status(201).json(newProject);
   } catch (error) {
@@ -22,11 +29,11 @@ exports.getProjects = async (req, res) => {
   }
 };
 
-
 // Contribution handler
 exports.contributeToProject = async (req, res) => {
   const { projectId } = req.params;
   const { amount } = req.body;
+  const userId = req.user.id; // Assuming you have middleware to attach the authenticated user's ID to req.user
 
   try {
     const project = await Project.findById(projectId);
@@ -36,6 +43,12 @@ exports.contributeToProject = async (req, res) => {
 
     // Update the project's current funding
     project.funding += parseFloat(amount);
+
+    // Add userId to the contributedBy array if not already added
+    if (!project.contributedBy.includes(userId)) {
+      project.contributedBy.push(userId);
+    }
+
     await project.save();
 
     res.status(200).json({ message: 'Contribution successful', project });

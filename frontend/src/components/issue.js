@@ -78,7 +78,9 @@ const CivicIssueForm = () => {
   return (
     <>
       <nav className="navbar">
-        <div className="logo">CivicConnect</div>
+         <Link to="/" className="logo" >
+                  Civic<span style={{ color: 'blue' }}>Connect</span>
+                  </Link>
         <ul>
           <li><Link to="/">Home</Link></li>
           <li><Link to="/trending">Trending Issues</Link></li>

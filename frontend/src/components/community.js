@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './styles/community.css';
-import { Link } from 'react-router-dom';
+import { Link , Navigate} from 'react-router-dom';
 import axios from 'axios';
 
 export default function CommunityUpdated() {
@@ -18,18 +18,81 @@ export default function CommunityUpdated() {
   }, []);
 
   const fetchProjects = async () => {
-    const response = await axios.get('/api/community/projects');
-    setProjects(response.data);
+    const token = localStorage.getItem('token'); // Retrieve the token
+    if (!token) {
+      alert('You must be logged in to view projects.');
+      return;
+    }
+  
+    try {
+      const response = await axios.get('http://localhost:5000/api/community/projects', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      const userId = JSON.parse(atob(token.split('.')[1])).id; // Decode user ID from token
+  
+      // Fetch user info for the project creator and add participation check
+      const projectsWithParticipation = await Promise.all(
+        response.data.map(async (project) => {
+          let creatorInfo = null;
+          if (project.createdBy) {
+            try {
+              const userResponse = await axios.get(`http://localhost:5000/api/users/${project.createdBy}`);
+              creatorInfo = userResponse.data; // Attach creator info to project
+            } catch (error) {
+              console.error(`Error fetching user info for project ${project._id}`, error);
+            }
+          }
+  
+          return {
+            ...project,
+            creatorInfo, // Add creator details
+            hasParticipated: project.contributedBy.includes(userId), // Check if user has contributed
+          };
+        })
+      );
+  
+      setProjects(projectsWithParticipation);
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+      alert('Failed to fetch projects. Please try again.');
+    }
   };
+  
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post('/api/community/projects', { name: projectName, goalAmount, description });
-    fetchProjects(); // Refresh the project list
-    setProjectName('');
-    setGoalAmount('');
-    setDescription('');
+    const token = localStorage.getItem('token'); // Retrieve the token from local storage
+  
+    if (!token) {
+      alert('You must be logged in to submit a project.');
+      return;
+    }
+  
+    try {
+      await axios.post(
+        '/api/community/projects',
+        { name: projectName, goalAmount, description },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include token for authentication
+          },
+        }
+      );
+  
+      fetchProjects(); // Refresh the project list
+      setProjectName('');
+      setGoalAmount('');
+      setDescription('');
+    } catch (error) {
+      console.error('Error submitting project:', error);
+      alert('Failed to submit project. Please try again.');
+    }
   };
+  
   const loadVolunteeredProjects = () => {
     const storedProjects = localStorage.getItem('volunteeredProjects');
     if (storedProjects) {
@@ -37,23 +100,45 @@ export default function CommunityUpdated() {
     }
   };
 
-  const saveVolunteeredProjects = (newProjects) => {
-    localStorage.setItem('volunteeredProjects', JSON.stringify([...newProjects]));
-  };
+ 
 
   const handleContribution = async (projectId) => {
-    await axios.post(`http://localhost:5000/api/community/projects/${projectId}/contribute`, { amount: 1 });
-    const updatedProjects = new Set([...volunteeredProjects, projectId]);
-    setVolunteeredProjects(updatedProjects);
-    saveVolunteeredProjects(updatedProjects);
-    fetchProjects(); // Refresh the project list to update funding
+    const token = localStorage.getItem('token'); // Retrieve the token
+    if (!token) {
+      alert('You must be logged in to participate in a project.');
+      return;
+    }
+  
+    try {
+      await axios.post(
+        `http://localhost:5000/api/community/projects/${projectId}/contribute`,
+        { amount: 1 },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+          },
+        }
+      );
+  
+      fetchProjects(); // Refresh the project list to update participation status
+    } catch (error) {
+      if (error.response?.status === 400) {
+        alert(error.response.data.message); // Already contributed message
+      } else {
+        console.error('Error contributing to project:', error);
+        alert('Failed to contribute to the project. Please try again.');
+      }
+    }
   };
+  
 
 
   return (
     <>
       <nav className="navbar">
-        <div className="logo">CivicConnect</div>
+      <Link to="/" className="logo" >
+          Civic<span style={{ color: 'blue' }}>Connect</span>
+          </Link>
         <ul>
           <li>
             <Link to="/">Home</Link></li>
@@ -106,7 +191,7 @@ export default function CommunityUpdated() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={5}
-              placeholder="Describe your project..."
+              placeholder="Describe your project...Mention Location And contact information"
               required
             />
             <button type="submit" className="btn">Submit Project</button>
@@ -114,37 +199,41 @@ export default function CommunityUpdated() {
         )}
       </section>
       <section className="monitoring-section">
-        <h2>Monitor Your Contributions</h2>
-        <p>Keep track of the projects you support. Stay informed about progress and updates.</p>
-        <div className="project-list">
-          {projects.map((project) => (
-            <div className="project-card" key={project._id}>
-              <h3>{project.name}</h3>
-              <p>Volunteers Required: {project.goalAmount} | Active participants: {project.funding}</p>
-              <div className="progress-bar">
-                <div
-                  className="progress"
-                  style={{
-                    width: `${Math.min((project.funding / project.goalAmount) * 100, 100)}%`,
-                  }}
-                />
-              </div>
-              <p className="progress-text">
-                {Math.min((project.funding / project.goalAmount) * 100, 100).toFixed(2)}% completed
-              </p>
-              {project.funding >= project.goalAmount ? (
-                <p className="goal-completed">Goal is Completed</p>
-              ) : volunteeredProjects.has(project._id) ? (
-                <p className="already-volunteered">You have participated</p>
-              ) : (
-                <button onClick={() => handleContribution(project._id)} className="btn">
-                   Participate
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
+  <h2>Monitor Your Contributions</h2>
+  <p>Keep track of the projects you support. Stay informed about progress and updates.</p>
+  <div className="project-list">
+  {projects.map((project) => (
+    <div className="project-card" key={project._id}>
+      <h3>{project.name}</h3>
+      {/* <p>Created by: {project.creatorInfo?.name || 'Unknown'}</p> */}
+      <p>Contact Email: {project.creatorInfo?.email || 'Not available'}</p>
+      <p>Description :{project.description}</p>
+      <p>Volunteers Required: {project.goalAmount} | Active participants: {project.funding}</p>
+      <div className="progress-bar">
+        <div
+          className="progress"
+          style={{
+            width: `${Math.min((project.funding / project.goalAmount) * 100, 100)}%`,
+          }}
+        />
+      </div>
+      <p className="progress-text">
+        {Math.min((project.funding / project.goalAmount) * 100, 100).toFixed(2)}% completed
+      </p>
+      {project.funding >= project.goalAmount ? (
+        <p className="goal-completed">Goal is Completed</p>
+      ) : project.hasParticipated ? (
+        <p className="already-participated">You have participated</p>
+      ) : (
+        <button onClick={() => handleContribution(project._id)} className="btn">
+          Participate
+        </button>
+      )}
+    </div>
+  ))}
+</div>
+
+</section>
 
       <footer>
         <p>© 2024 CivicConnect. All Rights Reserved.</p>
@@ -152,3 +241,4 @@ export default function CommunityUpdated() {
     </>
   );
 }
+
