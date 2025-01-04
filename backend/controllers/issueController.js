@@ -58,7 +58,7 @@ exports.getIssuesByLoggedInGovernmentAuthority = async (req, res) => {
     // Fetch issues reported to the logged-in government authority
     const issues = await Issue.find({ governmentAuthority: req.user.id }) // Use logged-in government's authority ID
       .populate('reportedBy', 'name email') // Optional: Populate user details
-      .populate('governmentAuthority', 'name email'); // Optional: Populate government authority details
+      .populate('governmentAuthority', 'name email department'); // Optional: Populate government authority details
 
     if (issues.length === 0) {
       return res.status(404).json({ message: 'No issues found for this government authority' });

@@ -76,7 +76,6 @@ export default function App() {
 
   const [trendingIssues, setTrendingIssues] = useState([]);
   const [userId, setUserId] = useState(null); // Store the decoded user ID
-  const [upvotedIssues, setUpvotedIssues] = useState(new Set());
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -356,7 +355,7 @@ export default function App() {
            <h3>Volunteering </h3>
            <p>Contribute your time and skills to initiatives that aim to enhance our community. Together, we can achieve great things through collective effort and dedication!</p>
              <Link to="/" className="btn">
-               Contribute
+               Let's Do
              </Link>
            </div>
          </div><div class="card">
@@ -486,7 +485,7 @@ export default function App() {
               <h3>Volunteering </h3>
                 <p>Contribute your time and skills to initiatives that aim to enhance our community. Together, we can achieve great things through collective effort and dedication!</p>
                 <Link to="/" className="btn">
-                  Funds
+                Let's Do
                 </Link>
               </div>
             </div><div class="card">

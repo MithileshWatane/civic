@@ -232,7 +232,7 @@ footer {
 }
 
 .card:nth-child(3) .card-image {
-  background-image: url('Funding.png');
+  background-image: url('funding.jpg');
 }
 
 .card:nth-child(4) .card-image {

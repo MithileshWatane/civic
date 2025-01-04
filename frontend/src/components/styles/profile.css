@@ -48,6 +48,9 @@ html, body {
   margin-top: 10px;
 }
 
+.pie-chart-profile{
+  width: 100px;
+}
 /* Issues Section */
 .issues {
   width: 100%;

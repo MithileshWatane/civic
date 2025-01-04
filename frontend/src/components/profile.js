@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './styles/profile.css';
 import { Link } from 'react-router-dom';
+import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -44,10 +45,19 @@ const Profile = () => {
       await axios.delete(`http://localhost:5000/api/issues/delete/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setIssues(issues.filter(issue => issue._id !== id)); // Update state to remove deleted issue
+      setIssues(issues.filter((issue) => issue._id !== id));
     } catch (err) {
       setError('Error deleting issue');
     }
+  };
+
+  const calculateIssueStats = () => {
+    const total = issues.length;
+    const reported = issues.filter((issue) => issue.status === 'reported').length;
+    const inProgress = issues.filter((issue) => issue.status === 'in Progress').length;
+    const resolved = issues.filter((issue) => issue.status === 'resolved').length;
+
+    return { total, reported, inProgress, resolved };
   };
 
   if (loading) {
@@ -57,6 +67,19 @@ const Profile = () => {
   if (error) {
     return <div className="error">{error}</div>;
   }
+
+  const { total, reported, inProgress, resolved } = calculateIssueStats();
+
+  // Data for Pie Chart
+  const pieChartData = [
+    { name: 'Reported', value: reported },
+    { name: 'In Progress', value: inProgress },
+    { name: 'Resolved', value: resolved },
+  ];
+
+  console.log('Pie Chart Data:', pieChartData);  // Debugging log to check the data
+
+  const COLORS = ['#ffbb33', '#33b5e5', '#00C49F']; // Colors for chart segments
 
   return (
     <div className="profile-page">
@@ -77,10 +100,41 @@ const Profile = () => {
             {user && (
               <>
                 <h1>Profile</h1>
-                <h3 color='blue'>Name: </h3><br />
-                <h2>{user.name}</h2><br />
-                <h3>Email: </h3><br />
+                <h3>Name:</h3>
+                <h2>{user.name}</h2>
+                <h3>Email:</h3>
                 <h2>{user.email}</h2>
+                <div className="issue-stats">
+                  <h4>Issue Statistics:</h4>
+                  <p>Total Issues: {total}</p>
+                  <p>Reported: {reported}</p>
+                  <p>In Progress: {inProgress}</p>
+                  <p>Resolved: {resolved}</p>
+                
+                <div className="pie-chart-profile">
+                  <h4>Visualization:</h4>
+                  {total > 0 ? (
+                    <PieChart width={200} height={300}>
+                      <Pie
+                        data={pieChartData}
+                        cx="50%"
+                        cy="50%"
+                        label
+                        outerRadius={100}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {pieChartData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                      <Legend />
+                    </PieChart>
+                  ) : (
+                    <p>No issues to display on the chart.</p>
+                  )}
+                </div></div>
               </>
             )}
           </div>
@@ -98,8 +152,8 @@ const Profile = () => {
                   Description: {issue.description} <br />
                   Location: {issue.location} <br />
                   Status: {issue.status} <br />
-                  Reported To: {issue.governmentAuthority.name} ({issue.governmentAuthority.email}) <br /><br></br>
-                  <button onClick={() => deleteIssue(issue._id)}>Delete</button> {/* Delete button */}
+                  Reported To: {issue.governmentAuthority.name} ({issue.governmentAuthority.email}) <br />
+                  <button onClick={() => deleteIssue(issue._id)}>Delete</button>
                 </li>
               ))}
             </ul>
