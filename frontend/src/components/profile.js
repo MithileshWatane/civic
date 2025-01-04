@@ -92,7 +92,7 @@ const Profile = () => {
         </ul>
       </nav>
 
-      <h1>Profile</h1>
+
 
       <div className="main-content">
         <div className="sidebar">
@@ -101,7 +101,7 @@ const Profile = () => {
               <>
                 <h1>Profile</h1>
                 <h3>Name:</h3>
-                <h2>{user.name}</h2>
+                <h2>{user.name}</h2><br></br>
                 <h3>Email:</h3>
                 <h2>{user.email}</h2>
                 <div className="issue-stats">
