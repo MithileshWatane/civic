@@ -238,6 +238,7 @@ export default function App() {
         <h2>Trending Issues</h2>
         <div className="issue-card-container">
           {trendingIssues
+          .filter((issue) => issue.status !== 'resolved') // Exclude resolved issue
             .sort((a, b) => b.votes - a.votes)
             .map((issue, index) => (
               <div className="issue-card" key={issue._id}>

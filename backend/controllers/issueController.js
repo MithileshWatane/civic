@@ -216,3 +216,49 @@ exports.deleteIssue = async (req, res) => {
     console.error('Error deleting issue:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }};
+
+
+  exports.editIssue = async (req, res) => {
+    const { id } = req.params; // Get the issue ID from the URL
+    const { title, description, location, governmentAuthority, status } = req.body; // Data to update the issue
+  
+    try {
+      // Ensure req.user is defined and authenticated
+      if (!req.user || !req.user.id) {
+        return res.status(401).json({ message: 'Unauthorized: User not authenticated' });
+      }
+  
+      // Fetch the issue to verify ownership or permission
+      const issue = await Issue.findById(id);
+  
+      if (!issue) {
+        return res.status(404).json({ message: 'Issue not found' });
+      }
+  
+      // Check if the logged-in user is the reporter or a government authority associated with the issue
+      if (
+        issue.reportedBy.toString() !== req.user.id &&
+        issue.governmentAuthority.toString() !== req.user.id
+      ) {
+        return res.status(403).json({ message: 'Forbidden: You do not have permission to edit this issue' });
+      }
+  
+      // Update the issue
+      const updatedIssue = await Issue.findByIdAndUpdate(
+        id,
+        { title, description, location, governmentAuthority, status },
+        { new: true, runValidators: true } // Return the updated document and run validators
+      );
+  
+      res.status(200).json({
+        message: 'Issue updated successfully',
+        updatedIssue,
+      });
+    } catch (error) {
+      console.error('Error editing issue:', error);
+      res.status(500).json({
+        message: 'Server error',
+        error: error.message,
+      });
+    }
+  };

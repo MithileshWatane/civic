@@ -10,6 +10,9 @@ const Profile = () => {
   const [projects, setProjects] = useState([]); // Added state for projects
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [editIssue, setEditIssue] = useState(null); // New state for editing issue
+  const [editProject, setEditProject] = useState(null); // New state for editing project
+  const [editUser, setEditUser] = useState(null); // New state for editing user details
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -48,7 +51,6 @@ const Profile = () => {
           setError('No token found');
         }
       } catch (err) {
-        setError('Error fetching data');
       } finally {
         setLoading(false);
       }
@@ -66,6 +68,82 @@ const Profile = () => {
       setIssues(issues.filter((issue) => issue._id !== id));
     } catch (err) {
       setError('Error deleting issue');
+    }
+  };
+
+  const deleteProject = async (id) => {
+    const token = localStorage.getItem('token');
+    try {
+      await axios.delete(`http://localhost:5000/api/community/delete/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProjects(projects.filter((project) => project._id !== id));
+    } catch (err) {
+      setError('Error deleting project');
+    }
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditIssue({ ...editIssue, [name]: value });
+  };
+
+  const saveEdit = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/issues/edit/${editIssue._id}`,
+        editIssue,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setIssues((prevIssues) =>
+        prevIssues.map((issue) =>
+          issue._id === editIssue._id ? { ...issue, ...editIssue } : issue
+        )
+      );
+      setEditIssue(null); // Close the modal
+    } catch (err) {
+      setError('Error updating issue');
+    }
+  };
+
+  const saveProjectEdit = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/community/edit/${editProject._id}`,
+        editProject,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setProjects((prevProjects) =>
+        prevProjects.map((project) =>
+          project._id === editProject._id ? { ...project, ...editProject } : project
+        )
+      );
+      setEditProject(null); // Close the modal
+    } catch (err) {
+      setError('Error updating project');
+    }
+  };
+
+  const saveUserEdit = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/register/update`,
+        editUser,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setUser({ ...user, name: editUser.name, email: editUser.email });
+      setEditUser(null); // Close the modal
+    } catch (err) {
+      setError('Error updating user');
     }
   };
 
@@ -117,10 +195,9 @@ const Profile = () => {
               <>
                 <h1>Profile</h1>
                 <h3>Name:</h3>
-                <h2>{user.name}</h2>
-                <br />
+                <h4>{user.name}</h4>
                 <h3>Email:</h3>
-                <h2>{user.email}</h2>
+                <h4>{user.email} <button onClick={() => setEditUser(user)}>Edit Profile</button></h4>
                 <div className="issue-stats">
                   <h4>Issue Statistics:</h4>
                   <p>Total Issues: {total}</p>
@@ -171,32 +248,141 @@ const Profile = () => {
                   Location: {issue.location} <br />
                   Status: {issue.status} <br />
                   Reported To: {issue.governmentAuthority.name} ({issue.governmentAuthority.email}) <br />
+                  <button onClick={() => setEditIssue(issue)}>Edit</button>
                   <button onClick={() => deleteIssue(issue._id)}>Delete</button>
                 </li>
               ))}
             </ul>
           )}
 
-<div className="projects">
-          <h3>Projects Created by You</h3>
-          {projects.length === 0 ? (
-            <p>No projects created by you.</p>
-          ) : (
-            <ul>
-              {projects.map((project) => (
-                <li key={project._id}>
-                  <strong>{project.name}</strong> <br />
-                  Description: {project.description} <br />
-                  Volunteers Required: {project.goalAmount} <br />
-                  Active participants: {project.funding} <br />
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+          <div className="projects">
+            <h3>Projects Created by You</h3>
+            {projects.length === 0 ? (
+              <p>No projects created by you.</p>
+            ) : (
+              <ul>
+                {projects.map((project) => (
+                  <li key={project._id}>
+                    <strong>{project.name}</strong> <br />
+                    Description: {project.description} <br />
+                    Volunteers Required: {project.goalAmount} <br />
+                    Active participants: {project.funding} <br />
+                    <button onClick={() => setEditProject(project)}>Edit</button>
+                    <button onClick={() => deleteProject(project._id)}>Delete</button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
 
-        
+        {editIssue && (
+          <div className="edit-modal">
+            <div className="edit-content">
+              <h3>Edit Issue</h3>
+              <form>
+                <label>
+                  Title:
+                  <input
+                    type="text"
+                    name="title"
+                    value={editIssue.title}
+                    onChange={handleEditChange}
+                  />
+                </label>
+                <label>
+                  Description:
+                  <textarea
+                    name="description"
+                    value={editIssue.description}
+                    onChange={handleEditChange}
+                  />
+                </label>
+                <button type="button" onClick={saveEdit}>
+                  Save
+                </button>
+                <button type="button" onClick={() => setEditIssue(null)}>
+                  Cancel
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {editProject && (
+          <div className="edit-modal">
+            <div className="edit-content">
+              <h3>Edit Project</h3>
+              <form>
+                <label>
+                  Name:
+                  <input
+                    type="text"
+                    name="name"
+                    value={editProject.name}
+                    onChange={(e) =>
+                      setEditProject({ ...editProject, name: e.target.value })
+                    }
+                  />
+                </label>
+                <label>
+                  Description:
+                  <textarea
+                    name="description"
+                    value={editProject.description}
+                    onChange={(e) =>
+                      setEditProject({ ...editProject, description: e.target.value })
+                    }
+                  />
+                </label>
+                <button type="button" onClick={saveProjectEdit}>
+                  Save
+                </button>
+                <button type="button" onClick={() => setEditProject(null)}>
+                  Cancel
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {editUser && (
+          <div className="edit-modal">
+            <div className="edit-content">
+              <h3>Edit Profile</h3>
+              <form>
+                <label>
+                  Name:
+                  <input
+                    type="text"
+                    name="name"
+                    value={editUser.name}
+                    onChange={(e) =>
+                      setEditUser({ ...editUser, name: e.target.value })
+                    }
+                  />
+                </label>
+                <label>
+                  Email:
+                  <input
+                    type="email"
+                    name="email"
+                    value={editUser.email}
+                    onChange={(e) =>
+                      setEditUser({ ...editUser, email: e.target.value })
+                    }
+                  />
+                </label>
+                <button type="button" onClick={saveUserEdit}>
+                  Save
+                </button>
+                <button type="button" onClick={() => setEditUser(null)}>
+                  Cancel
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
 
       <footer>
