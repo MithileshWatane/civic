@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './styles/complaints.css';
-import { navigate } from 'react-router-dom';
 
 const CivicIssueForm = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    location: '', // Simple string for location
+    location: '',
     governmentAuthority: '',
   });
 
   const [Authorities, setAuthorities] = useState([]);
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
   // Handle input changes
   const handleInputChange = (e) => {
@@ -24,16 +24,15 @@ const CivicIssueForm = () => {
     try {
       const response = await fetch('http://localhost:5000/api/government-authorities/get');
       const data = await response.json();
-      setAuthorities(data); // Populate dropdown with data
+      setAuthorities(data);
     } catch (error) {
       console.error('Error fetching authorities:', error);
     }
   };
 
-  // Call fetchAuthorities when the component mounts
   useEffect(() => {
     fetchAuthorities();
-  }, []); // Empty dependency array ensures it runs only once
+  }, []);
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -42,7 +41,7 @@ const CivicIssueForm = () => {
     const issueData = {
       title: formData.title,
       description: formData.description,
-      location: formData.location, // Simple string for location
+      location: formData.location,
       governmentAuthority: formData.governmentAuthority,
     };
 
@@ -51,7 +50,7 @@ const CivicIssueForm = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`, // JWT for user authentication
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify(issueData),
       });
@@ -66,6 +65,7 @@ const CivicIssueForm = () => {
           location: '',
           governmentAuthority: '',
         });
+        navigate('/profile'); // Navigate to the profile page after submission
       } else {
         alert(data.message || 'Failed to report the issue. Please try again.');
       }

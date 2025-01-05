@@ -207,7 +207,7 @@ export default function App() {
         <div className="overlay" />
         <div className="hero-content" >
           <h1>'Empower Your Voice'</h1>
-          <p>Report issues, track progress, and improve your community.</p>
+          <p>Report issues, Track progress  and Contribute to community.</p>
           <Link to="/issue" className="btn hero-btn"  >
             Report Now
           </Link>
@@ -219,7 +219,7 @@ export default function App() {
         <div className="overlay" />
         <div className="hero-content" >
           <h1>'Empower Your Voice'</h1>
-          <p>Report issues, track progress, and improve your community.</p>
+          <p>Report issues, Track progress  and Contribute to community.</p>
           
         </div>
       </header>
@@ -437,7 +437,7 @@ export default function App() {
             <div className="overlay" />
             <div className="hero-content">
               <h1>'Empower Your Voice'</h1>
-              <p>Report issues, track progress, and improve your community.</p>
+              <p>Report issues, Track progress  and Contribute to community.</p>
               <div>
               <Link to="/" className="btn hero-btn" onClick={handleReportIssueClick1} >
                 Report Now

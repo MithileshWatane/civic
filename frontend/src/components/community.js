@@ -33,8 +33,7 @@ export default function CommunityUpdated() {
   
       const userId = JSON.parse(atob(token.split('.')[1])).id; // Decode user ID from token
   
-      // Fetch user info for the project creator and add participation check
-      const projectsWithParticipation = await Promise.all(
+      const projectsWithDetails = await Promise.all(
         response.data.map(async (project) => {
           let creatorInfo = null;
           if (project.createdBy) {
@@ -50,11 +49,12 @@ export default function CommunityUpdated() {
             ...project,
             creatorInfo, // Add creator details
             hasParticipated: project.contributedBy.includes(userId), // Check if user has contributed
+            isCreator: project.createdBy === userId, // Check if the user is the creator
           };
         })
       );
   
-      setProjects(projectsWithParticipation);
+      setProjects(projectsWithDetails);
     } catch (error) {
       console.error('Error fetching projects:', error);
       alert('Failed to fetch projects. Please try again.');
@@ -202,37 +202,37 @@ export default function CommunityUpdated() {
   <h2>Monitor Your Contributions</h2>
   <p>Keep track of the projects you support. Stay informed about progress and updates.</p>
   <div className="project-list">
-  {projects.map((project) => (
-    <div className="project-card" key={project._id}>
-      <h3>{project.name}</h3>
-      {/* <p>Created by: {project.creatorInfo?.name || 'Unknown'}</p> */}
-      <p>Contact Email: {project.creatorInfo?.email || 'Not available'}</p>
-      <p>Description :{project.description}</p>
-      <p>Volunteers Required: {project.goalAmount} | Active participants: {project.funding}</p>
-      <div className="progress-bar">
-        <div
-          className="progress"
-          style={{
-            width: `${Math.min((project.funding / project.goalAmount) * 100, 100)}%`,
-          }}
-        />
+    {projects.map((project) => (
+      <div className="project-card" key={project._id}>
+        <h3>{project.name}</h3>
+        <p>Contact Email: {project.creatorInfo?.email || 'Not available'}</p>
+        <p>Description: {project.description}</p>
+        <p>Volunteers Required: {project.goalAmount} | Active participants: {project.funding}</p>
+        <div className="progress-bar">
+          <div
+            className="progress"
+            style={{
+              width: `${Math.min((project.funding / project.goalAmount) * 100, 100)}%`,
+            }}
+          />
+        </div>
+        <p className="progress-text">
+          {Math.min((project.funding / project.goalAmount) * 100, 100).toFixed(2)}% completed
+        </p>
+        {project.funding >= project.goalAmount ? (
+          <p className="goal-completed">Goal is Completed</p>
+        ) : project.isCreator ? (
+          <p className="creator">You created this project</p> // Optionally show a message to the creator
+        ) : project.hasParticipated ? (
+          <p className="already-participated">You have participated</p>
+        ) : (
+          <button onClick={() => handleContribution(project._id)} className="btn">
+            Participate
+          </button>
+        )}
       </div>
-      <p className="progress-text">
-        {Math.min((project.funding / project.goalAmount) * 100, 100).toFixed(2)}% completed
-      </p>
-      {project.funding >= project.goalAmount ? (
-        <p className="goal-completed">Goal is Completed</p>
-      ) : project.hasParticipated ? (
-        <p className="already-participated">You have participated</p>
-      ) : (
-        <button onClick={() => handleContribution(project._id)} className="btn">
-          Participate
-        </button>
-      )}
-    </div>
-  ))}
-</div>
-
+    ))}
+  </div>
 </section>
 
       <footer>
