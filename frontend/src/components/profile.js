@@ -150,7 +150,7 @@ const Profile = () => {
   const calculateIssueStats = () => {
     const total = issues.length;
     const reported = issues.filter((issue) => issue.status === 'reported').length;
-    const inProgress = issues.filter((issue) => issue.status === 'in Progress').length;
+    const inProgress = issues.filter((issue) => issue.status === 'in progress').length;
     const resolved = issues.filter((issue) => issue.status === 'resolved').length;
 
     return { total, reported, inProgress, resolved };
