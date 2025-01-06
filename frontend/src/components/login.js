@@ -136,7 +136,7 @@ export default function Login() {
       </div>
 
       <footer className="footer">
-        <p>© 2024 CivicConnect. All Rights Reserved.</p>
+        <p>© 2025 CivicConnect. All Rights Reserved.</p>
       </footer>
     </>
   );

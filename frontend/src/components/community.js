@@ -236,7 +236,7 @@ export default function CommunityUpdated() {
 </section>
 
       <footer>
-        <p>© 2024 CivicConnect. All Rights Reserved.</p>
+        <p>© 2025 CivicConnect. All Rights Reserved.</p>
       </footer>
     </>
   );

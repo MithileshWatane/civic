@@ -125,7 +125,7 @@ export default function Trending() {
       </section>
 
       <footer id="contact">
-        <p>© 2024 CivicConnect. All Rights Reserved.</p>
+        <p>© 2025 CivicConnect. All Rights Reserved.</p>
       </footer>
     </>
   );

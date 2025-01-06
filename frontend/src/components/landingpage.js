@@ -384,7 +384,7 @@ export default function App() {
       </div>
 
       <footer id="contact">
-        <p>© 2024 CivicConnect. All Rights Reserved.</p>
+        <p>© 2025 CivicConnect. All Rights Reserved.</p>
       </footer>
     </div>
        
@@ -526,7 +526,7 @@ export default function App() {
     
     
        <footer id="contact">
-              <p>© 2024 CivicConnect. All Rights Reserved.</p>
+              <p>© 2025 CivicConnect. All Rights Reserved.</p>
             </footer>
     
     

@@ -188,7 +188,7 @@ export default function Register() {
       </div>
 
       <footer className="footer">
-        <p>© 2024 CivicConnect. All rights reserved.</p>
+        <p>© 2025 CivicConnect. All rights reserved.</p>
       </footer>
     </>
   );
