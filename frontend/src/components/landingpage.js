@@ -252,7 +252,7 @@ export default function App() {
                 <h3 style={{ color: 'black' }}>
                   #{index + 1} {issue.title}
                 </h3>
-                <p>Reported by {issue.votes} citizens</p>
+                <p>Upvoted by {issue.votes} citizens</p>
                 <p>{issue.description}</p>
                 {issue.upvotedBy.includes(userId) ? (
                   // Show this if the user has already upvoted
