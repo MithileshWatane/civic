@@ -243,6 +243,7 @@ const Profile = () => {
             <ul>
               {issues.map((issue) => (
                 <li key={issue._id}>
+                 <img src={issue.image?.[0]} alt="Issue" className="issue-image"  style={{ width: "150px", height: "150px", objectFit: "cover" }} />
                   <strong>{issue.title}</strong> <br />
                   Description: {issue.description} <br />
                   Location: {issue.location} <br />

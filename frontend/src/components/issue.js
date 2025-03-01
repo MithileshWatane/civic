@@ -10,8 +10,9 @@ const CivicIssueForm = () => {
     governmentAuthority: '',
   });
 
+  const [images, setImages] = useState([]);
   const [Authorities, setAuthorities] = useState([]);
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const navigate = useNavigate();
 
   // Handle input changes
   const handleInputChange = (e) => {
@@ -19,10 +20,15 @@ const CivicIssueForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  // Handle image selection
+  const handleImageChange = (e) => {
+    setImages(e.target.files); // Store selected files
+  };
+
   // Fetch authorities from the backend
   const fetchAuthorities = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/government-authorities/get');
+      const response = await fetch('https://civicdeploy-1.onrender.com/api/government-authorities/get');
       const data = await response.json();
       setAuthorities(data);
     } catch (error) {
@@ -38,21 +44,24 @@ const CivicIssueForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const issueData = {
-      title: formData.title,
-      description: formData.description,
-      location: formData.location,
-      governmentAuthority: formData.governmentAuthority,
-    };
+    const formDataToSend = new FormData();
+    formDataToSend.append('title', formData.title);
+    formDataToSend.append('description', formData.description);
+    formDataToSend.append('location', formData.location);
+    formDataToSend.append('governmentAuthority', formData.governmentAuthority);
+
+    // Append selected images
+    for (let i = 0; i < images.length; i++) {
+      formDataToSend.append('images', images[i]);
+    }
 
     try {
       const response = await fetch('http://localhost:5000/api/issues/report', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-        body: JSON.stringify(issueData),
+        body: formDataToSend, // Use FormData
       });
 
       const data = await response.json();
@@ -65,7 +74,8 @@ const CivicIssueForm = () => {
           location: '',
           governmentAuthority: '',
         });
-        navigate('/profile'); // Navigate to the profile page after submission
+        setImages([]); // Clear images
+        navigate('/profile');
       } else {
         alert(data.message || 'Failed to report the issue. Please try again.');
       }
@@ -93,7 +103,7 @@ const CivicIssueForm = () => {
       </nav>
       <div className="issue-form">
         <h2>Raise Civic Issue</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
           <div>
             <label htmlFor="title">Issue Title:</label>
             <input
@@ -143,6 +153,17 @@ const CivicIssueForm = () => {
                 </option>
               ))}
             </select>
+          </div>
+          <div>
+            <label htmlFor="images">Upload Images:</label>
+            <input
+              type="file"
+              id="images"
+              name="images"
+              multiple
+              accept="image/*"
+              onChange={handleImageChange}
+            />
           </div>
           <button type="submit">Submit Issue</button>
         </form>

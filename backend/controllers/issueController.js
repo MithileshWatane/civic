@@ -9,12 +9,16 @@ exports.reportIssue = async (req, res) => {
       return res.status(401).json({ message: 'Unauthorized: User not authenticated' });
     }
 
+    // Extract image paths if files are uploaded
+    const imagePaths = req.files ? req.files.map(file => `/uploads/${file.filename}`) : [];
+
     const issue = new Issue({
       title,
       description,
       location,
       governmentAuthority,
       reportedBy: req.user.id, // Access user ID
+      images: imagePaths, // Store uploaded image paths
     });
 
     await issue.save();
@@ -34,14 +38,28 @@ exports.getIssuesByLoggedInUser = async (req, res) => {
 
     // Fetch issues reported by the logged-in user
     const issues = await Issue.find({ reportedBy: req.user.id })
-      .populate('reportedBy', 'name email') // Optional: Populate user details
-      .populate('governmentAuthority', 'name email'); // Optional: Populate government authority details
+      .populate('reportedBy', 'name email') // Populate user details
+      .populate('governmentAuthority', 'name email') // Populate government authority details
+      .select('title description status images createdAt updatedAt'); // Include image and other details
 
     if (issues.length === 0) {
       return res.status(404).json({ message: 'No issues found for this user' });
     }
 
-    res.status(200).json({ message: 'Issues fetched successfully', issues });
+    res.status(200).json({ 
+      message: 'Issues fetched successfully', 
+      issues: issues.map(issue => ({
+        _id: issue._id,
+        title: issue.title,
+        description: issue.description,
+        status: issue.status,
+        image: issue.images, // Ensure image field is included
+        reportedBy: issue.reportedBy,
+        governmentAuthority: issue.governmentAuthority,
+        createdAt: issue.createdAt,
+        updatedAt: issue.updatedAt
+      }))
+    });
   } catch (error) {
     console.error('Error fetching issues by logged-in user ID:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
