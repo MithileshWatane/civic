@@ -3,6 +3,8 @@ import axios from 'axios';
 import './styles/profile.css';
 import { Link } from 'react-router-dom';
 import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -13,7 +15,23 @@ const Profile = () => {
   const [editIssue, setEditIssue] = useState(null); // New state for editing issue
   const [editProject, setEditProject] = useState(null); // New state for editing project
   const [editUser, setEditUser] = useState(null); // New state for editing user details
+  const customIcon = new L.Icon({
+    iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+  });
 
+
+
+    const [modalImage, setModalImage] = useState(null);
+  
+    const openModal = (image) => {
+      setModalImage(image);
+    };
+  
+    const closeModal = () => {
+      setModalImage(null);
+    }
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -240,10 +258,11 @@ const Profile = () => {
           {issues.length === 0 ? (
             <p>No issues reported by User.</p>
           ) : (
-            <ul>
-              {issues.map((issue) => (
-                <li key={issue._id}>
-                 <img src={issue.image?.[0]} alt="Issue" className="issue-image"  style={{ width: "150px", height: "150px", objectFit: "cover" }} />
+            <>
+    <ul style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {issues.map((issue) => (
+              <li key={issue._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid #ddd', padding: '10px', borderRadius: '5px' }}>
+                <div>
                   <strong>{issue.title}</strong> <br />
                   Description: {issue.description} <br />
                   Location: {issue.location} <br />
@@ -251,33 +270,20 @@ const Profile = () => {
                   Reported To: {issue.governmentAuthority.name} ({issue.governmentAuthority.email}) <br />
                   <button onClick={() => setEditIssue(issue)}>Edit</button>
                   <button onClick={() => deleteIssue(issue._id)}>Delete</button>
-                </li>
-              ))}
-            </ul>
-          )}
+                </div>
+                {issue.image?.[0] && <img src={issue.image[0]} alt="Issue" className="issue-image" style={{ width: '150px', height: '150px', objectFit: 'cover', cursor: 'pointer' }} onClick={() => openModal(issue.image[0])} />}
+              </li>
+            ))}
+          </ul>
 
-          <div className="projects">
-            <h3>Projects Created by You</h3>
-            {projects.length === 0 ? (
-              <p>No projects created by you.</p>
-            ) : (
-              <ul>
-                {projects.map((project) => (
-                  <li key={project._id}>
-                    <strong>{project.name}</strong> <br />
-                    Description: {project.description} <br />
-                    Volunteers Required: {project.goalAmount} <br />
-                    Active participants: {project.funding} <br />
-                    <button onClick={() => setEditProject(project)}>Edit</button>
-                    <button onClick={() => deleteProject(project._id)}>Delete</button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
 
-        {editIssue && (
+     
+          {modalImage && (
+        <div className="modal" style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: 'rgba(0,0,0,0.8)', padding: '20px', borderRadius: '10px', zIndex: 1001 }}>
+          <button onClick={closeModal} style={{ position: 'absolute', top: '10px', right: '10px', backgroundColor: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer', borderRadius: '5px', zIndex: 1002 }}>Close</button>
+          <img src={modalImage} alt="Expanded" style={{ maxWidth: '80vw', maxHeight: '80vh', borderRadius: '5px' }} />
+
+          {editIssue && (
           <div className="edit-modal">
             <div className="edit-content">
               <h3>Edit Issue</h3>
@@ -310,7 +316,14 @@ const Profile = () => {
           </div>
         )}
 
-        {editProject && (
+        </div>
+      )}
+       
+            </>
+          )}
+        </div>
+      </div>
+      {editProject && (
           <div className="edit-modal">
             <div className="edit-content">
               <h3>Edit Project</h3>
@@ -384,11 +397,6 @@ const Profile = () => {
             </div>
           </div>
         )}
-      </div>
-
-      <footer>
-        <p>© 2025 CivicConnect. All Rights Reserved.</p>
-      </footer>
     </div>
   );
 };
