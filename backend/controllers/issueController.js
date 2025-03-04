@@ -1,7 +1,7 @@
 const Issue = require('../models/Issue');
 
 exports.reportIssue = async (req, res) => {
-  const { title, description, location, governmentAuthority } = req.body;
+  const { title, description, location, governmentAuthority, latitude, longitude } = req.body;
 
   try {
     // Ensure req.user is defined
@@ -16,6 +16,8 @@ exports.reportIssue = async (req, res) => {
       title,
       description,
       location,
+      latitude,
+      longitude,
       governmentAuthority,
       reportedBy: req.user.id, // Access user ID
       images: imagePaths, // Store uploaded image paths
@@ -40,7 +42,7 @@ exports.getIssuesByLoggedInUser = async (req, res) => {
     const issues = await Issue.find({ reportedBy: req.user.id })
       .populate('reportedBy', 'name email') // Populate user details
       .populate('governmentAuthority', 'name email') // Populate government authority details
-      .select('title description status images createdAt updatedAt'); // Include image and other details
+      .select('title description status images createdAt updatedAt location latitude longitude'); // Include image and other details
 
     if (issues.length === 0) {
       return res.status(404).json({ message: 'No issues found for this user' });
@@ -52,6 +54,9 @@ exports.getIssuesByLoggedInUser = async (req, res) => {
         _id: issue._id,
         title: issue.title,
         description: issue.description,
+        location:issue.location,
+        latitude:issue.latitude,
+        longitude:issue.longitude,
         status: issue.status,
         image: issue.images, // Ensure image field is included
         reportedBy: issue.reportedBy,
@@ -213,6 +218,9 @@ exports.getAllIssues = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+
+
 exports.deleteIssue = async (req, res) => {
   const { id } = req.params; // Get the issue ID from the URL
 
