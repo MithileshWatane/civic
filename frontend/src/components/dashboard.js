@@ -307,7 +307,7 @@ export default function Dashboard() {
                 borderRadius: '4px', 
                 marginTop: '8px',
               }}>
-                <strong>Warning:</strong> Complaint seems to be fake. Flagged by {complaint.flags} {complaint.flags === 1 ? 'person' : 'people'}.
+                <strong>Warning:</strong>Complaint seems to be suspicious. Flagged by {complaint.flags} {complaint.flags === 1 ? 'person' : 'people'}.
               </p>
             )}
           </div>

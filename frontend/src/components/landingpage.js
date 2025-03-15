@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './styles/trending.css';
+import './trending2.css';
 import axios from 'axios';
 import './styles/index.css';
 import { jwtDecode } from 'jwt-decode';  // Corrected import
@@ -312,7 +312,7 @@ export default function App() {
                       <h3 style={{ color: 'black' }}>
                         #{index + 1} {issue.title}
                       </h3>
-                      <p>Upvoted by {issue.votes} citizens</p>
+                      <span style={{ color: 'green'}} >Upvoted by {issue.votes} citizens</span>
                       <p>{issue.description}</p>
                       <div style={{ display: 'flex', gap: '10px' }}>
               {issue.upvotedBy?.includes(userId) ? (
@@ -329,7 +329,7 @@ export default function App() {
               {/* Flag button and status */}
               {issue.flaggedBy?.includes(userId) ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <span style={{ color: 'red', fontSize: '1.5em' }}>⚑</span>
+                  <span style={{ color: 'red', fontSize: '1.2em' }}>⚑</span>
                   <span style={{ color: 'red' }}>Flagged</span>
                 </div>
               ) : (
@@ -337,8 +337,8 @@ export default function App() {
                   className="cta-button" 
                   onClick={() => handleFlag(issue._id)}
                   style={{ 
-                    backgroundColor: ' rgb(247, 106, 106)', 
-                    color: 'white', 
+                    backgroundColor: ' rgb(255, 233, 233)', 
+                    color: '#e34f4f', 
                     padding: '8px 16px', 
                     border: 'none', 
                     borderRadius: '4px', 
@@ -408,10 +408,10 @@ export default function App() {
                          className="trending-icon"
                        />
                      )}
-                     <h3 style={{ color: 'black' }}>
+                     <h3 style={{ color: 'green' }}>
                        #{index + 1} {issue.title}
                      </h3>
-                     <p>Upvoted by {issue.votes} citizens</p>
+                     <span style={{ color: 'green'}}>Upvoted by {issue.votes} citizens</span>
                      {issue.flags > 0 && (
               <p style={{ color: '#ff4d4d', marginTop: '5px', fontSize: '0.9em' }}>
                 Flagged by {issue.flags} {issue.flags === 1 ? 'user' : 'users'}

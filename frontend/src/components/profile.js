@@ -303,38 +303,7 @@ const Profile = () => {
           <button onClick={closeModal} style={{ position: 'absolute', top: '10px', right: '10px', backgroundColor: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer', borderRadius: '5px', zIndex: 1002 }}>Close</button>
           <img src={modalImage} alt="Expanded" style={{ maxWidth: '80vw', maxHeight: '80vh', borderRadius: '5px' }} />
 
-          {editIssue && (
-          <div className="edit-modal">
-            <div className="edit-content">
-              <h3>Edit Issue</h3>
-              <form>
-                <label>
-                  Title:
-                  <input
-                    type="text"
-                    name="title"
-                    value={editIssue.title}
-                    onChange={handleEditChange}
-                  />
-                </label>
-                <label>
-                  Description:
-                  <textarea
-                    name="description"
-                    value={editIssue.description}
-                    onChange={handleEditChange}
-                  />
-                </label>
-                <button type="button" onClick={saveEdit}>
-                  Save
-                </button>
-                <button type="button" onClick={() => setEditIssue(null)}>
-                  Cancel
-                </button>
-              </form>
-            </div>
-          </div>
-        )}
+         
 
         </div>
       )}
@@ -411,6 +380,39 @@ const Profile = () => {
                   Save
                 </button>
                 <button type="button" onClick={() => setEditUser(null)}>
+                  Cancel
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+{editIssue && (
+          <div className="edit-modal">
+            <div className="edit-content">
+              <h3>Edit Issue</h3>
+              <form>
+                <label>
+                  Title:
+                  <input
+                    type="text"
+                    name="title"
+                    value={editIssue.title}
+                    onChange={handleEditChange}
+                  />
+                </label>
+                <label>
+                  Description:
+                  <textarea
+                    name="description"
+                    value={editIssue.description}
+                    onChange={handleEditChange}
+                  />
+                </label>
+                <button type="button" onClick={saveEdit}>
+                  Save
+                </button>
+                <button type="button" onClick={() => setEditIssue(null)}>
                   Cancel
                 </button>
               </form>
