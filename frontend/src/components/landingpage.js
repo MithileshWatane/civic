@@ -408,7 +408,7 @@ export default function App() {
                          className="trending-icon"
                        />
                      )}
-                     <h3 style={{ color: 'green' }}>
+                     <h3>
                        #{index + 1} {issue.title}
                      </h3>
                      <span style={{ color: 'green'}}>Upvoted by {issue.votes} citizens</span>

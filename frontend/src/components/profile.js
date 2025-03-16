@@ -201,6 +201,7 @@ const Profile = () => {
   };
 
   return (
+    <>
     <div className="profile-page">
       <nav className="navbar">
          <Link to="/" className="logo" >
@@ -233,7 +234,7 @@ const Profile = () => {
                   <div className="pie-chart-profile">
                     <h4>Visualization:</h4>
                     {total > 0 ? (
-                      <PieChart width={200} height={300}>
+                      <PieChart width={220} height={400}>
                         <Pie
                           data={pieChartData}
                           cx="50%"
@@ -420,6 +421,10 @@ const Profile = () => {
           </div>
         )}
     </div>
+      <footer id="contact" >
+      <p>© 2025 CivicConnect. All Rights Reserved.</p>
+    </footer>
+    </>
   );
 };
 
