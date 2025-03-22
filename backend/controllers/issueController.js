@@ -180,7 +180,6 @@ exports.upvoteIssue = async (req, res) => {
   }
 };
 
-
 exports.flagIssue = async (req, res) => {
   const { id } = req.params; // Get the issue ID from the URL
   const { flag } = req.body; // Get flag action from the request body

@@ -347,27 +347,27 @@ export default function Trending() {
                         <div className="issue-timeframe">
                           Reported {timeAgo}
                         </div>
-                        <div className="issue-counts">
-                          {issue.votes} reports
-                        </div>
+                       
                       </div>
                     </div>
                   </div>
                   
                   <div className="issue-card-content">
                     <div className="issue-category" data-category={category.toLowerCase().replace(/\s+/g, '-')}>
-                      <span className="category-icon">{categoryIcon}</span>
-                      <span>{category}</span>
-                    </div>
-                    <span style={{ color: 'green', marginLeft: '4rem', fontSize: '0.9rem' }}>
-  Upvoted by {issue.votes} citizens
-</span>
-                    <div className="issue-location">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
+                      <span className="category-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="12" cy="10" r="3" />
                         <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z" />
-                      </svg>
+                      </svg></span>
                       <span>{location}</span>
+                    </div>
+                    {issue.votes > 0 && (
+  <span style={{ color: 'green', marginLeft: '1.2rem', fontSize: '0.9rem' }}>
+    Upvoted by {issue.votes} citizens
+  </span>
+)}
+
+                    <div className="issue-location">
+                      
                     </div>
                     
                     <h3 className="issue-title">{issue.title}</h3>
@@ -403,7 +403,9 @@ export default function Trending() {
 
 
 
-                        <span>+{Math.max(0, issue.votes - 2)} more</span>
+{issue.votes > 2 && (
+  <span>+{Math.max(0, issue.votes - 2)} more</span>
+)}
                        
                       </div>
                       {issue.upvotedBy?.includes(userId) ? (
@@ -451,6 +453,12 @@ export default function Trending() {
                 fontSize : '0.9 em',
               }}>
               Complaint seems to be suspicious. Flagged by {issue.flags} {issue.flags === 1 ? 'person' : 'people'}.
+              </p>
+            )}
+            
+            {issue.flags <2 && (
+              <p style={{ color: '#ff4d4d', marginTop: '15px', fontSize: '0.9em' }}>
+                Flagged by {issue.flags} {issue.flags === 1 ? 'user' : 'users'}
               </p>
             )}
                   </div>
@@ -532,19 +540,7 @@ export default function Trending() {
                 </div>
               ))}
               
-              <div className="impact-stats">
-                <h3>Community Impact</h3>
-                <div className="stats-grid">
-                  <div className="stat-item">
-                    <div className="stat-value">80%</div>
-                    <div className="stat-label">Issues resolved faster with community upvotes</div>
-                  </div>
-                  <div className="stat-item">
-                    <div className="stat-value">5x</div>
-                    <div className="stat-label">More likely to receive attention from officials</div>
-                  </div>
-                </div>
-              </div>
+              
             </div>
           ) : (
             <div className="benefits-grid">
@@ -556,20 +552,7 @@ export default function Trending() {
                 </div>
               ))}
               
-              <div className="impact-stats">
-                <h3>Administrative Impact</h3>
-                <div className="stats-grid">
-                  <div className="stat-item">
-                    
-                    <div className="stat-value">42%</div>
-                    <div className="stat-label">Reduction in duplicate issue reports</div>
-                  </div>
-                  <div className="stat-item">
-                    <div className="stat-value">$140K</div>
-                    <div className="stat-label">Average annual savings in issue management</div>
-                  </div>
-                </div>
-              </div>
+              
             </div>
           )}
           

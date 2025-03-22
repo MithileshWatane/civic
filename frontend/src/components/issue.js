@@ -451,19 +451,7 @@ style={{ flex: 1, maxWidth: '60%', margin: '30px', padding: '15px' }}>
                   </div>
                 ))}
                 
-                <div className="impact-stats">
-                  <h3>Issue Resolution</h3>
-                  <div className="stats-grid">
-                    <div className="stat-item">
-                      <div className="stat-value">85%</div>
-                      <div className="stat-label">Issues resolved within 30 days</div>
-                    </div>
-                    <div className="stat-item">
-                      <div className="stat-value">3x</div>
-                      <div className="stat-label">Faster response with photo evidence</div>
-                    </div>
-                  </div>
-                </div>
+                
               </div>
             ) : (
               <div className="benefits-grid">
@@ -475,19 +463,7 @@ style={{ flex: 1, maxWidth: '60%', margin: '30px', padding: '15px' }}>
                   </div>
                 ))}
                 
-                <div className="impact-stats">
-                  <h3>Resource Efficiency</h3>
-                  <div className="stats-grid">
-                    <div className="stat-item">
-                      <div className="stat-value">38%</div>
-                      <div className="stat-label">Reduction in site inspection costs</div>
-                    </div>
-                    <div className="stat-item">
-                      <div className="stat-value">24%</div>
-                      <div className="stat-label">Faster average resolution time</div>
-                    </div>
-                  </div>
-                </div>
+               
               </div>
             )}
             
