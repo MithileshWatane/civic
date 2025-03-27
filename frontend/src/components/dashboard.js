@@ -8,6 +8,7 @@ import { Download } from 'lucide-react'; // Make sure to import Download icon
 
 
 export default function Dashboard() {
+  const [role, setRole] = useState(null);
   const [complaints, setComplaints] = useState([]);
   const [text, setText] = useState("");
 
@@ -412,14 +413,20 @@ export default function Dashboard() {
     { name: 'In Progress', count: issueCounts.inProgress },
     { name: 'Resolved', count: issueCounts.resolved },
   ];
+  useEffect(() => {
+    // ✅ Fetch role from localStorage when Dashboard loads
+    const storedRole = localStorage.getItem('role');
+    if (storedRole) {
+      setRole(storedRole); // Set state with stored role
+    }
+  }, []); 
 
   useEffect(() => {
-    fetchComplaints();
+    fetchComplaints(); // Fetch complaints on component mount
   }, []);
 
   useEffect(() => {
-   
-    filterComplaintsByStatus(statusFilter);
+    filterComplaintsByStatus(statusFilter); // Apply status filter whenever it changes
   }, [statusFilter, complaints]);
 
   const filterComplaintsByStatus = (status) => {
@@ -769,7 +776,32 @@ export default function Dashboard() {
                             )}
                           </div>
                         )}
-                        
+                         {complaint.flags > 1 && (
+  <p style={{ 
+    backgroundColor: 'white', 
+    color: 'red', 
+    padding: '5px 10px', 
+    borderRadius: '4px', 
+    marginTop: '8px',
+  }}>
+    <strong>Warning:</strong> Complaint flagged by {complaint.flags} {complaint.flags === 1 ? 'person' : 'people'}.
+  </p>
+)}
+
+{/* New: Show Flagged Reasons for Authorities */}
+{role === 'government' && complaint.flaggedReasons?.length > 0 && (
+  <div style={{ backgroundColor: '#fff3f3', padding: '10px', borderRadius: '5px', marginTop: '10px' }}>
+    <strong>🚨 Flagged Reasons:</strong>
+    <ul>
+      {complaint.flaggedReasons.map((entry, index) => (
+        <li key={index} style={{ fontSize: '0.9em', color: '#ff4d4d' }}>
+          <strong>{entry.user}</strong>: {entry.reason} 
+          {entry.flaggedAt ? <em> ({new Date(entry.flaggedAt).toLocaleString()})</em> : null}
+        </li>
+      ))}
+      </ul>
+      </div>
+)}
                         
                       </div>
                     )}
