@@ -232,9 +232,16 @@ export default function App() {
             </>
           )}
           {role === 'government' && (
+            <>
             <li onClick={() => handleNavigation('/dashboard')}>
               <Link to="/">Track Progress</Link>
             </li>
+
+            <li onClick={() => handleNavigation('/category')}>
+              <Link to="/">category</Link>
+            </li>
+            </>
+             
           )}
           {isLoggedIn ? (
             <>
